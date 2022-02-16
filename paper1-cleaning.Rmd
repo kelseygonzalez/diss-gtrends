@@ -3,6 +3,8 @@ title: "gtrends_cleaning"
 author: "Kelsey Gonzalez"
 date: "2/7/2022"
 output: html_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -113,20 +115,13 @@ find_year_trends <- function(keyword, year){
   return(rescaled_trends)
 }
 
-find_cross_sectional_trends <- function(keyword, date_begin, span_type = 'month'){
-  if (span_type == 'week'){
-    ppl <- as.character(ymd(date_begin) + 7)
-  }
-  if (span_type == 'two-week'){
-    ppl <- as.character(ymd(date_begin) + 14)
-  }
-  if (span_type == 'month'){
-    ppl <- as.character(ymd(date_begin) + 31)
-  }
-  if (span_type == 'year'){
-    ppl <- as.character(ymd(date_begin) + 365)
-  }
-  
+
+```
+
+```{r find_cross_sectional_trends}
+find_cross_sectional_trends <- function(keyword, date_begin, span_length = 1){
+  ppl <- as.character(ymd(date_begin) + span_length)
+
   print(glue("keyword = {keyword}"))
   print(glue("span = {date_begin} - {ppl}"))
   
@@ -140,7 +135,11 @@ find_cross_sectional_trends <- function(keyword, date_begin, span_type = 'month'
     tibble() %>%
     mutate(date = date_begin,
            hits = as.numeric(hits)) %>% 
-    select(-c(geo, gprop)) 
+    select(-c(geo, gprop)) %>% 
+    mutate(location = str_to_upper(location),
+           location = str_replace_all(location,"-", " - "),
+           location = str_replace_all(location,",", ""),
+           location = str_replace_all(location,"\\s(\\w{2})\\b", " \\(\\1\\)"))
   
   return(trends)
   
@@ -148,6 +147,22 @@ find_cross_sectional_trends <- function(keyword, date_begin, span_type = 'month'
 ```
 
 
+# dma keys
+```{r}
+# bringing in DMA fox new search from
+# https://dataverse.harvard.edu/file.xhtml?persistentId=doi:10.7910/DVN/IVXEHT/A56RIW&version=7.4
+dma <- read_csv(here("data", "county_dma.csv")) %>%
+    mutate(FIPS_state = str_pad(STATEFP, 2, pad = "0"),
+         FIPS_county = str_pad(CNTYFP, 3, pad = "0"),
+         FIPS = paste0(FIPS_state, FIPS_county)) %>%
+  select(FIPS, DMA, STATE, COUNTY)
+
+# I made this file for the various inconsistencies between the two
+dma_key <- read_csv(here("data","google_dma_key.csv")) 
+
+dma <- dma %>%
+  full_join(dma_key)
+```
 
 
 # attitudinal
@@ -157,7 +172,7 @@ find_cross_sectional_trends <- function(keyword, date_begin, span_type = 'month'
 cross-sectional
 dates - March 3, 2021 – March 15, 2021
 ```{r}
-find_cross_sectional_trends('trend', '2021-03-03', 'two-week')
+find_cross_sectional_trends('trend', '2021-03-03', 12)
 ```
 
 
@@ -169,29 +184,111 @@ find_cross_sectional_trends('trend', '2021-03-03', 'two-week')
 cross-sectional
 July 2 and July 14, 2020
 ```{r}
-find_cross_sectional_trends('trend', '2020-07-02', 'two-week')
+find_cross_sectional_trends('trend', '2020-07-02', 12)
 ```
 
 
 # health
-• Covid Rates
+## Covid Rates
 		○ https://github.com/nytimes/covid-19-data/tree/master/rolling-averages
 longitudinal
 dates - 
 
-find_year_trends <- function(keyword, year)
+```{r}
+covid_rates <- vroom('https://raw.githubusercontent.com/nytimes/covid-19-data/master/rolling-averages/us-counties-2020.csv') %>% bind_rows(vroom('https://raw.githubusercontent.com/nytimes/covid-19-data/master/rolling-averages/us-counties-2021.csv')) %>% 
+  mutate(wday = lubridate::wday(date, label=TRUE),
+         fips = str_sub(geoid, start = -5)) %>% 
+  filter(wday == "Mon") %>% 
+  select(fips, date, county, state, covid_rate = cases_avg_per_100k)
 
 
-• Suicide
+covid_gtrend <- find_year_trends('Covid-19', 2020) %>% 
+  rowbind(find_year_trends('Covid-19', 2021))
+
+find_year_trends('Cant smell', '2020-01-01', 365)
+find_year_trends('Covid-19', '2021-01-01', 365)
+```
+
+## Suicide
 		○ https://wonder.cdc.gov/mcd.html 
 		○ Multiple Cause of Death Data 2019 (see notes for which variables count)
-dates - 
+dates - 2019 cross sectional inclusive
+
+<!-- TODO need new wonder file, this one only has 1k counties??  -->
+
+```{r suicide}
+suicide_measures <- read_delim(here('data','suicide',
+                                    'Multiple Cause of Death, 2018-2019, Single Race.txt')) %>% 
+  janitor::clean_names() %>% 
+  filter(is.na(notes)) %>% 
+  select(fips = county_code, county, deaths, population, crude_rate)
+
+suicide_gtrends <- find_cross_sectional_trends(c('suicide', 'depression', 'suicide hotline'), 
+                                               '2019-01-01', 365) %>%   
+  pivot_wider(names_from = keyword, values_from = hits)  %>% 
+  select(-date) %>% 
+  mutate(location = str_to_lower(location))
+
+suicide <- suicide_measures %>% 
+  left_join(select(dma, FIPS, DMA_google), by = c('fips' = 'FIPS')) %>% 
+  full_join(suicide_gtrends, by = c('DMA_google' = 'location'))  
+
+
+  select(dma = DMA_google,
+         fips = county_fips, 
+         clinton_p, `Hilary Clinton`, trump_p, `Donald Trump`)
+```
 
 
 # political
 • Presidential results
-		○ https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/VOQCHQ
-		○ MIT Election Data and Science Lab, 2018, 
-		○ "County Presidential Election Returns 2000-2020",
-		○ https://doi.org/10.7910/DVN/VOQCHQ, 
-		○ Harvard Dataverse, V9
+https://github.com/tonmcg/US_County_Level_Election_Results_08-20
+```{r pres_results}
+pres_2016_results <- read_csv('https://raw.githubusercontent.com/tonmcg/US_County_Level_Election_Results_08-20/master/2016_US_County_Level_Presidential_Results.csv') %>% 
+  select(county_name, county_fips = combined_fips, 
+         totalvotes = total_votes, clinton = votes_dem, trump = votes_gop) %>% 
+    mutate(county_fips = str_pad(county_fips, 5, pad = 0),
+           clinton_p = clinton / totalvotes,
+         trump_p = trump / totalvotes)
+
+
+pres_2020_results <- read_csv('https://raw.githubusercontent.com/tonmcg/US_County_Level_Election_Results_08-20/master/2020_US_County_Level_Presidential_Results.csv') %>% 
+  select(state = state_name, county_name, county_fips, 
+         totalvotes = total_votes, biden = votes_dem, trump = votes_gop) %>% 
+    mutate(biden_p = biden / totalvotes,
+         trump_p = trump / totalvotes)
+```
+```{r pres_gtrend}
+pres_2020_gtrend <- find_cross_sectional_trends(c('Joe Biden', 'Donald Trump'), '2020-01-01', 307) %>% 
+  pivot_wider(names_from = keyword, values_from = hits)  %>% 
+  select(-date)
+
+
+pres_2016_gtrend <- find_cross_sectional_trends(c('Hilary Clinton', 'Donald Trump'), '2016-01-01', 307) %>% 
+  pivot_wider(names_from = keyword, values_from = hits)  %>% 
+  select(-date)
+```
+```{r}
+pres_2016 <- pres_2016_results %>% 
+  inner_join(select(dma, FIPS, DMA_google), by = c('county_fips' = 'FIPS')) %>%
+  left_join(pres_2016_gtrend, by = c('DMA_google' = 'location')) %>%
+  select(dma = DMA_google,
+         fips = county_fips, 
+         clinton_p, `Hilary Clinton`, trump_p, `Donald Trump`)
+  
+pres_2016 %>% ggplot(aes(x = trump_p, y = `Donald Trump`)) + geom_jitter() + geom_smooth()
+pres_2016 %>% ggplot(aes(x = clinton_p, y = `Hilary Clinton`)) + geom_jitter()
+
+pres_2020 <- pres_2020_results %>% 
+  inner_join(select(dma, FIPS, DMA_google), by = c('county_fips' = 'FIPS')) %>% 
+  left_join(pres_2020_gtrend, by = c('DMA_google' = 'location')) %>% 
+  select(dma = DMA_google,
+         fips = county_fips, 
+         biden_p, `Joe Biden`, trump_p, `Donald Trump`)
+
+pres_2020 %>% ggplot(aes(x = biden_p, y = Joe Biden`)) + geom_jitter() + geom_smooth()
+pres_2020 %>% ggplot(aes(x = trump_p, y = `Donald Trump`)) + geom_jitter() + geom_smooth()
+
+rm(list = c("pres_2016_results", "pres_2016_gtrend",
+            "pres_2020_results", "pres_2020_gtrend"))
+
