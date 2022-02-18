@@ -17,13 +17,16 @@ pacman::p_load(tidyverse, glue, here, vroom, gtrendsR,
 ```
 
 # Functions
-```{r}
+```{r find_year_trends}
 find_mondays <- function(year) {
+  print('finding mondays')
   mondays <- seq(ymd(glue("{year}-01-01")),ymd(glue("{year}-12-31")),by="1 day")
   mondays <- mondays[wday(mondays,label = TRUE) == "Mon" & mondays < today() - 7]
   return(mondays)
 }
 find_initial_trends <- function(keyword, period_list){
+  print(glue("find trends for '{keyword}'"))
+
   period_list <- as.character(period_list)
   
   trends <- tibble(location = character(),
@@ -51,6 +54,7 @@ find_initial_trends <- function(keyword, period_list){
   return(trends)
 }
 find_scale_point <- function(keyword, year){
+  print('finding relevant scale point, using US-CA-803')
   if (year(today()) == year) {
     span <- glue("{year}-01-01 {as.character(today() - 7)}")
     } else {
@@ -82,6 +86,7 @@ find_scale_point <- function(keyword, year){
   return(rescale)
 }
 rescale_trends <- function(trends, rescale){
+  print('rescaling trends')
   rescale_ratio <- rescale %>%
     mutate(location = 'Los Angeles CA',
            hits_rescale = replace_na(hits_rescale, 0),
@@ -146,7 +151,6 @@ find_cross_sectional_trends <- function(keyword, date_begin, span_length = 1){
 }
 ```
 
-
 # dma keys
 ```{r}
 # bringing in DMA fox new search from
@@ -166,26 +170,87 @@ dma <- dma %>%
 
 
 # attitudinal
-• Vaccine Hesitancy
+
+
+## Vaccine Hesitancy
 		○ https://data.cdc.gov/Vaccinations/Vaccine-Hesitancy-for-COVID-19-County-and-local-es/q9mh-h2tw/data
+		○ https://data.cdc.gov/Vaccinations/Vaccine-Hesitancy-for-COVID-19-County-and-local-es/q9mh-h2tw
 		
 cross-sectional
 dates - March 3, 2021 – March 15, 2021
-```{r}
-find_cross_sectional_trends('trend', '2021-03-03', 12)
+```{r vacc_hes}
+vacc_hes_data <- vroom(here('data', 'vaccine-hesitancy', 'Vaccine_Hesitancy_for_COVID-19__County_and_local_estimates.csv')) %>% 
+  janitor::clean_names() %>% 
+  mutate(fips = str_pad(fips_code, 5, pad = '0')) %>% 
+  select(fips, county_name, vacc_hesitant = estimated_hesitant_or_unsure)
+
+vacc_hes_gtrends <- find_cross_sectional_trends(c('covid conspiracy',
+                                                  'COVID-19 vaccine',
+                                                  'Coronavirus',
+                                                  'Covid-19'
+                                                  # URLdecode('%2Fg%2F11j8_9sv06'),
+                                                  # URLdecode('%2Fg%2F11j2cc_qll')
+                                                  ), 
+                            '2021-03-03', 12) %>%   
+  pivot_wider(names_from = keyword, values_from = hits)  %>% 
+  select(-date) %>% 
+  janitor::clean_names()
+
+vacc_hes <- vacc_hes_data %>% 
+  left_join(select(dma, FIPS, DMA_google), by = c('fips' = 'FIPS')) %>% 
+  full_join(vacc_hes_gtrends, by = c('DMA_google' = 'location'))  
+
+vacc_hes %>% 
+  pivot_longer(cols = covid_conspiracy:covid_19) %>% 
+  ggplot(aes(y = vacc_hesitant, x = value, color = name)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~ name)
+
+
+write_rds(vacc_hes, here('data', 'cleaned_data', 'vacc_hes.rds'))
 ```
 
-
-
-• Mask Usage
+## Mask Usage
 		○ New York Times Survey
 		○ https://github.com/nytimes/covid-19-data/tree/master/mask-use
 
 cross-sectional
 July 2 and July 14, 2020
-```{r}
-find_cross_sectional_trends('trend', '2020-07-02', 12)
+```{r Mask}
+
+mask_data <- read_csv('https://raw.githubusercontent.com/nytimes/covid-19-data/master/mask-use/mask-use-by-county.csv') %>% 
+  rowwise() %>% 
+  mutate(mask_rare = NEVER + RARELY) %>% 
+  select(fips = COUNTYFP, mask_rare)
+
+mask_gtrends <- find_cross_sectional_trends(c('Face mask',
+                                              'Mask',
+                                              # 'Civil and political rights',
+                                              'Cloth face mask'
+                                              ),
+                                            '2020-07-02', 12)%>%   
+  pivot_wider(names_from = keyword, values_from = hits)  %>% 
+  select(-date) %>% 
+  janitor::clean_names()
+
+mask <- mask_data %>% 
+  left_join(select(dma, FIPS, DMA_google), by = c('fips' = 'FIPS')) %>% 
+  full_join(mask_gtrends, by = c('DMA_google' = 'location'))  
+
+mask %>% 
+  pivot_longer(cols = face_mask:civil_and_political_rights) %>% 
+  ggplot(aes(y = mask_rare, x = value, color = name)) +
+  geom_point(alpha = 0.2) +
+  geom_smooth(method = "lm") +
+  facet_wrap(~ name)
+
+write_rds(mask, here('data', 'cleaned_data', 'mask.rds'))
+
 ```
+
+
+
 
 
 # health
@@ -194,19 +259,49 @@ find_cross_sectional_trends('trend', '2020-07-02', 12)
 longitudinal
 dates - 
 
-```{r}
+```{r covid}
 covid_rates <- vroom('https://raw.githubusercontent.com/nytimes/covid-19-data/master/rolling-averages/us-counties-2020.csv') %>% bind_rows(vroom('https://raw.githubusercontent.com/nytimes/covid-19-data/master/rolling-averages/us-counties-2021.csv')) %>% 
   mutate(wday = lubridate::wday(date, label=TRUE),
          fips = str_sub(geoid, start = -5)) %>% 
-  filter(wday == "Mon") %>% 
+  filter(wday == "Mon",
+         county != 'Unknown',
+         !(state %in% c('Puerto Rico', 'Virgin Islands', 'Northern Mariana Islands'))) %>% 
   select(fips, date, county, state, covid_rate = cases_avg_per_100k)
 
+covid_gtrend_2020 <- find_year_trends('Covid-19', 2020) 
+covid_gtrend_2021 <- find_year_trends('Covid-19', 2021) 
+covid_gtrend  <- covid_gtrend_2020 %>% bind_rows(covid_gtrend_2021) 
 
-covid_gtrend <- find_year_trends('Covid-19', 2020) %>% 
-  rowbind(find_year_trends('Covid-19', 2021))
+taste_gtrend_2020 <- find_year_trends('Taste Loss', 2020) 
+taste_gtrend_2021 <- find_year_trends('Taste Loss', 2021) 
+taste_gtrend  <- taste_gtrend_2020 %>% bind_rows(taste_gtrend_2021) 
 
-find_year_trends('Cant smell', '2020-01-01', 365)
-find_year_trends('Covid-19', '2021-01-01', 365)
+smell_gtrend_2020 <- find_year_trends('Smell Loss', 2020) 
+smell_gtrend_2021 <- find_year_trends('Smell Loss', 2021) 
+smell_gtrend  <- smell_gtrend_2020 %>% bind_rows(smell_gtrend_2021) 
+
+covid <- covid_rates %>% 
+  inner_join(select(dma, FIPS, DMA_google), by = c('fips' = 'FIPS')) %>% 
+  left_join(covid_gtrend, by = c('DMA_google', 'date')) %>% 
+  left_join(taste_gtrend, by = c('DMA_google', 'date')) %>% 
+  left_join(smell_gtrend, by = c('DMA_google', 'date')) %>% 
+  janitor::clean_names()
+
+
+
+covid %>% 
+  filter(fips %in% c("08003", '55057', '51059', '39085', 
+           # '36119',
+           '34021', '12071', '04017')) %>% 
+  pivot_longer(cols = c(covid_rate, covid_19, taste_loss, smell_loss)) %>% 
+  ggplot(aes(x = date, y = value, group = name, color = name)) +
+  geom_line() + 
+  geom_point() +
+  facet_wrap(~ glue('{county}, {state}'), scale = 'free_y') + 
+  theme_minimal()
+
+write_rds(covid, here('data', 'cleaned_data', 'covid.rds'))
+
 ```
 
 ## Suicide
@@ -214,36 +309,104 @@ find_year_trends('Covid-19', '2021-01-01', 365)
 		○ Multiple Cause of Death Data 2019 (see notes for which variables count)
 dates - 2019 cross sectional inclusive
 
-<!-- TODO need new wonder file, this one only has 1k counties??  -->
-
 ```{r suicide}
-suicide_measures <- read_delim(here('data','suicide',
-                                    'Multiple Cause of Death, 2018-2019, Single Race.txt')) %>% 
+suicide_measures_both <- read_delim(here('data','suicide',
+                                    'Multiple Cause of Death, 1999-2020.txt')) %>% 
   janitor::clean_names() %>% 
   filter(is.na(notes)) %>% 
-  select(fips = county_code, county, deaths, population, crude_rate)
+  select(fips = county_code, county, year = year_code, deaths_both = deaths, population)
 
-suicide_gtrends <- find_cross_sectional_trends(c('suicide', 'depression', 'suicide hotline'), 
-                                               '2019-01-01', 365) %>%   
-  pivot_wider(names_from = keyword, values_from = hits)  %>% 
-  select(-date) %>% 
-  mutate(location = str_to_lower(location))
+suicide_measures_mcd <- read_delim(here('data','suicide',
+                                    'Multiple Cause of Death, 1999-2020 only multiple cause.txt')) %>% 
+  janitor::clean_names() %>% 
+  filter(is.na(notes)) %>% 
+  select(fips = county_code, county, year = year_code, deaths_mcd = deaths)
+
+breaks <-  c(10,20,40,60,100,200,400,700,1300)
+suicide_measures <- suicide_measures_both %>% 
+  left_join(suicide_measures_mcd, by = c('fips', 'county', 'year')) %>% 
+  mutate(deaths_mcd = na_if(deaths_mcd,'Missing'),
+         deaths_both = na_if(deaths_both,'Missing'),
+         deaths_mcd_supp = ifelse(deaths_mcd == 'Suppressed', '(0:9]', NA), 
+         deaths_both_supp = ifelse(deaths_both == 'Suppressed', '(0:9]', NA), 
+         deaths_mcd = na_if(deaths_mcd,'Suppressed'),
+         deaths_both = na_if(deaths_both,'Suppressed'),
+         deaths_mcd_cut = as.character(cut(as.numeric(deaths_mcd), breaks = breaks)),
+         deaths_both_cut = as.character(cut(as.numeric(deaths_both), breaks = breaks)),
+         deaths_mcd_cut = ifelse(!is.na(deaths_mcd_supp),
+                                 deaths_mcd_supp,
+                                 deaths_mcd_cut), 
+         deaths_both_cut = ifelse(!is.na(deaths_both_supp),
+                                  deaths_both_supp,
+                                  deaths_both_cut)) %>% 
+        select(fips, county, year, deaths_both_cut) %>% 
+  mutate(deaths = factor(deaths_both_cut, ordered = T),
+         deaths = fct_relevel(deaths, c("(0:9]",
+                                        "(10,20]",
+                                        "(20,40]", 
+                                        "(40,60]",
+                                        "(60,100]",    
+                                        "(100,200]",
+                                        "(200,400]",
+                                        "(400,700]",   
+                                        "(700,1.3e+03]")))
+suicide_measures %>% 
+  count(year, deaths) %>%
+  ggplot(aes(x = deaths, y = n)) +
+  geom_bar(stat = 'identity') +
+  facet_wrap(~year)        
+  
+  
+append_years <- function(year_begin, year_end){
+  years <- seq(year_begin,year_end,1)
+  results <- tibble('location' = character(),
+    'suicide' = numeric(), 
+    'depression' = numeric(),
+    'suicide hotline' = numeric(),
+    'year' = numeric()
+    )
+  for (i in years){
+    print(glue("finding trends for {i}..."))
+    results <- find_cross_sectional_trends(c('suicide', 'depression', 'suicide hotline'),
+                                glue("{i}-01-01"), 365) %>%
+      pivot_wider(names_from = keyword, values_from = hits)  %>%
+      select(-date) %>%
+      mutate(year = i) %>% 
+      bind_rows(results)
+  }
+  results
+}  
+
+suicide_gtrends <- append_years(2010, 2020)
 
 suicide <- suicide_measures %>% 
   left_join(select(dma, FIPS, DMA_google), by = c('fips' = 'FIPS')) %>% 
-  full_join(suicide_gtrends, by = c('DMA_google' = 'location'))  
+  full_join(suicide_gtrends, by = c('DMA_google' = 'location', 'year' = 'year'))  %>% 
+  janitor::clean_names()
+
+write_rds(suicide, here('data', 'cleaned_data', 'suicide.rds'))
+
+suicide %>% 
+  filter(fips %in% c("08003", '55057', '51059', '39085', 
+           # '36119',
+           '34021', '12071', '04017')) %>% 
+  mutate(`actual deaths` = as.numeric(deaths) * 10) %>% 
+  pivot_longer(cols = c('suicide', 'depression', 'suicide_hotline', 'actual deaths')) %>% 
+  ggplot(aes(x = year, y = value, group = name, color = name)) +
+  geom_line() + 
+  geom_point() +
+  facet_wrap(~ glue('{county}'), scale = 'free_y') + 
+  theme_minimal()
 
 
-  select(dma = DMA_google,
-         fips = county_fips, 
-         clinton_p, `Hilary Clinton`, trump_p, `Donald Trump`)
+
 ```
 
 
 # political
 • Presidential results
 https://github.com/tonmcg/US_County_Level_Election_Results_08-20
-```{r pres_results}
+```{r pres}
 pres_2016_results <- read_csv('https://raw.githubusercontent.com/tonmcg/US_County_Level_Election_Results_08-20/master/2016_US_County_Level_Presidential_Results.csv') %>% 
   select(county_name, county_fips = combined_fips, 
          totalvotes = total_votes, clinton = votes_dem, trump = votes_gop) %>% 
@@ -257,8 +420,7 @@ pres_2020_results <- read_csv('https://raw.githubusercontent.com/tonmcg/US_Count
          totalvotes = total_votes, biden = votes_dem, trump = votes_gop) %>% 
     mutate(biden_p = biden / totalvotes,
          trump_p = trump / totalvotes)
-```
-```{r pres_gtrend}
+
 pres_2020_gtrend <- find_cross_sectional_trends(c('Joe Biden', 'Donald Trump'), '2020-01-01', 307) %>% 
   pivot_wider(names_from = keyword, values_from = hits)  %>% 
   select(-date)
@@ -267,8 +429,7 @@ pres_2020_gtrend <- find_cross_sectional_trends(c('Joe Biden', 'Donald Trump'), 
 pres_2016_gtrend <- find_cross_sectional_trends(c('Hilary Clinton', 'Donald Trump'), '2016-01-01', 307) %>% 
   pivot_wider(names_from = keyword, values_from = hits)  %>% 
   select(-date)
-```
-```{r}
+
 pres_2016 <- pres_2016_results %>% 
   inner_join(select(dma, FIPS, DMA_google), by = c('county_fips' = 'FIPS')) %>%
   left_join(pres_2016_gtrend, by = c('DMA_google' = 'location')) %>%
@@ -289,6 +450,10 @@ pres_2020 <- pres_2020_results %>%
 pres_2020 %>% ggplot(aes(x = biden_p, y = Joe Biden`)) + geom_jitter() + geom_smooth()
 pres_2020 %>% ggplot(aes(x = trump_p, y = `Donald Trump`)) + geom_jitter() + geom_smooth()
 
+
 rm(list = c("pres_2016_results", "pres_2016_gtrend",
             "pres_2020_results", "pres_2020_gtrend"))
+
+write_rds(pres_2016, here('data', 'cleaned_data', 'pres_2016.rds'))
+write_rds(pres_2020, here('data', 'cleaned_data', 'pres_2020.rds'))
 
