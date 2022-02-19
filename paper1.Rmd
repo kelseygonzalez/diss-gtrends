@@ -4,6 +4,8 @@ author: "Kelsey Gonzalez"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 editor_options:
   chunk_output_type: console
+  markdown: 
+    wrap: 72
 output:
   bookdown::pdf_document2:
     latex_engine: xelatex
@@ -42,7 +44,8 @@ knitr::opts_chunk$set(echo = FALSE,
 
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(tidyverse, glue, extrafont, here, jtools, psych,
-               modelsummary, showtext, thematic, kableExtra, scales)
+               modelsummary, showtext, thematic, kableExtra, scales,
+               rmcorr)
 
 my_palette = c('#56b4e9','#999999','#E69F00','#009E73','#CC79A7','#0072B2','#D55E00','#E69F00')
 my_palette  <- c(MetBrewer::met.brewer(name = 'Cross', type = 'discrete'), '#555F61')
@@ -98,258 +101,371 @@ theme_diss <- function(base_size = 14) {
 
 theme_set(theme_diss()) 
 
-conf_int_prop <- function(var){
-  p <- mean(!!var, na.rm = T)
-  q <- 1 - p
-  n <- nrow(rain)
-  min <- p - 1.96*sqrt((p*q)/n)
-  max <- p + 1.96*sqrt((p*q)/n) 
-  paste0(label_percent()(min), ", ", label_percent()(max))
-}
-print_perc <- function(var){
-  label_percent()(mean(var, na.rm = T))
-}
-
-
+```
+```{r data}
+vacc_hes <- read_rds(here('data', 'cleaned_data', 'vacc_hes.rds'))
+mask <- read_rds(here('data', 'cleaned_data', 'mask.rds'))
+covid <- read_rds(here('data', 'cleaned_data', 'covid.rds'))
+suicide <- read_rds(here('data', 'cleaned_data', 'suicide.rds'))
+pres_2016 <- read_rds(here('data', 'cleaned_data', 'pres_2016.rds'))
+pres_2020 <- read_rds(here('data', 'cleaned_data', 'pres_2020.rds'))
 ```
 
-# Abstract 
- 
+# Abstract
 
-Possible titles 
-Digital Trace Data as Social Indicators: Indicators of Attention Rather Than Support 
- 
+Possible titles Digital Trace Data as Social Indicators: Indicators of
+Attention Rather Than Support
 
-**Keywords**: 
+**Keywords**:
 
-# Intro 
-New big data sources have led to vast possibilities for social science research
-because they are bigger, cheaper, and already available
+# Intro
+
+New big data sources have led to vast possibilities for social science
+research because they are bigger, cheaper, and already available
 [@kingEnsuringDataRichFuture2011; @lazerComputationalSocialScience2009;
-@salganikBitBitSocial2017]. Before overenthusiastically embracing these sources
-into our workflows, social scientists must clearly establish parameters under
-which these data sources could be operationalized
-[@bailCulturalEnvironmentMeasuring2014; @lazerParableGoogleFlu2014]. As prior
-research outlined, the “quantity of data does not mean that one can ignore
-foundational issues of measurement and construct validity and reliability and
-dependencies among data” [@lazerParableGoogleFlu2014, p. 1203]. Building on this
-prior research outlining these various issues with big data
-[@boydCriticalQuestionsBig2012; @lazerIssuesConstructValidity2015], this paper
-tests the construct validity of Google Search Trends as an indicator of three
-different cases, namely cultural attitudes, disease prevalence and voting
-behavior. These three cases will be tested using cultural indicators from the
-NORC General Social Survey, United States county-level suicide rates from
-National Center for Health Statistics, US cases rates of Covid-19 from The New
-York Times, historical US Presidential Election results, and the American
-National Election Survey. Data will be analyzed against corresponding
-operationalized Google Trends longitudinal data using Pearson’s r for pairwise
-correlations, testing for the strength of relationships between the Google Trend
-indicator and the respective comparison indicator. This paper will contribute to
-the creation of methodological norms and standards of how to use Google Trends
-as a big data source for societal research and serve as a critical inquiry into
-the adoption of big data without a critical eye for the ecological validity of
-the sources.
+@salganikBitBitSocial2017]. Before overenthusiastically embracing these
+sources into our workflows, social scientists must clearly establish
+parameters under which these data sources could be operationalized
+[@bailCulturalEnvironmentMeasuring2014; @lazerParableGoogleFlu2014]. As
+prior research outlined, the "quantity of data does not mean that one
+can ignore foundational issues of measurement and construct validity and
+reliability and dependencies among data" \[@lazerParableGoogleFlu2014,
+p. 1203\]. Building on this prior research outlining these various
+issues with big data [@boydCriticalQuestionsBig2012;
+@lazerIssuesConstructValidity2015], this paper tests the construct
+validity of Google Search Trends as an indicator of three different
+cases, namely cultural attitudes, disease prevalence and voting
+behavior. These three cases will be tested using cultural indicators
+from the NORC General Social Survey, United States county-level suicide
+rates from National Center for Health Statistics, US cases rates of
+Covid-19 from The New York Times, historical US Presidential Election
+results, and the American National Election Survey. Data will be
+analyzed against corresponding operationalized Google Trends
+longitudinal data using Pearson's r for pairwise correlations, testing
+for the strength of relationships between the Google Trend indicator and
+the respective comparison indicator. This paper will contribute to the
+creation of methodological norms and standards of how to use Google
+Trends as a big data source for societal research and serve as a
+critical inquiry into the adoption of big data without a critical eye
+for the ecological validity of the sources.
 
+With the expansion of big data, some research has shown extremely
+innovative methods that lead to groundbreaking results that are shown to
+be reliable. As an example, @blumenstockPredictingPovertyWealth2015 use
+county-level cell-phone records to construct the distribution of poverty
+and wealth in Rwanda, a country where national surveys and censes are
+rare and costly. However, @blumenstockPredictingPovertyWealth2015 go to
+great lengths to demonstrate that their operationalization of the cell
+phone data creates a reliable and valid construct; few social science
+papers utilizing big data dig into the construct validity of their
+metrics to this extent and even fewer publications focus on
+methodological guidelines of how to use sources of big data
+[@asseoTrackingCOVID19Using2020; @stilesAssessingCriterionValidity2018].
+However, research has shown the small adjustments to an algorithm or
+metric may void any research insight we are able to pull from such data
+[@lazerParableGoogleFlu2014]. Because of this, I propose a
+methodological validation study of the Google Search Trends source of
+big data to investigate how it is advisable to utilize this data in
+social scientific research.
 
+I will use three categorizations of ways I propose Google Trends could
+be operationalized for social scientific usage. First, I'll test Google
+Trends as an operationalization of cultural attitudes with the General
+Social Survey. After @bailCulturalEnvironmentMeasuring2014's call for
+cultural sociologists to utilize the ever-expanding world of big data,
+Google trends as a data source began appearing in sociological and
+social science research. From research on mass shootings and firearms
+[@brownsteinInternetSearchPatterns2020;
+@semenzaInformationseekingWakeTragedy2020], protest and anti-Muslim
+sentiment [@bailUsingInternetSearch2018;
+@barrieSearchingRacismGeorge2020; @grossThereFergusonEffect2017], to
+analyzing country-level changes in social perception [@reyes_etal18],
+Google search trends are a new and innovative indicator of cultural
+interest. Extending into social networks and culture,
+@bailPrestigeProximityPrejudice2019 even used Google trends to measure
+how culture spreads around the globe.
 
-
-With the expansion of big data, some research has shown extremely innovative
-methods that lead to groundbreaking results that are shown to be reliable. As an
-example, @blumenstockPredictingPovertyWealth2015 use
-county-level cell-phone records to construct the distribution of poverty and
-wealth in Rwanda, a country where national surveys and censes are rare and
-costly. However, @blumenstockPredictingPovertyWealth2015
-go to great lengths to demonstrate that their operationalization of the cell
-phone data creates a reliable and valid construct; few social science papers
-utilizing big data dig into the construct validity of their metrics to this
-extent and even fewer publications focus on methodological guidelines of how to
-use sources of big data [@asseoTrackingCOVID19Using2020;
-@stilesAssessingCriterionValidity2018]. However, research has shown the small
-adjustments to an algorithm or metric may void any research insight we are able
-to pull from such data [@lazerParableGoogleFlu2014]. Because of this, I propose
-a methodological validation study of the Google Search Trends source of big data
-to investigate how it is advisable to utilize this data in social scientific
-research.
-
-I will use three categorizations of ways I propose Google Trends could be
-operationalized for social scientific usage. First, I’ll test Google Trends as
-an operationalization of cultural attitudes with the General Social Survey.
-After @bailCulturalEnvironmentMeasuring2014’s call for cultural
-sociologists to utilize the ever-expanding world of big data, Google trends as a
-data source began appearing in sociological and social science research.  From
-research on mass shootings and firearms [@brownsteinInternetSearchPatterns2020;
-@semenzaInformationseekingWakeTragedy2020], protest and anti-Muslim sentiment
-[@bailUsingInternetSearch2018; @barrieSearchingRacismGeorge2020;
-@grossThereFergusonEffect2017], to analyzing country-level changes in social
-perception [@reyes_etal18], Google search trends are a new and innovative
-indicator of cultural interest. Extending into social networks and culture,
-@bailPrestigeProximityPrejudice2019 even used Google
-trends to measure how culture spreads around the globe.
-
-Google Search Trends have also been used continuously in estimations of disease
-prevalence and population health in journals like the Journal of Medical
-Internet Research. While much of this research has focused on the Covid-19
-pandemic [@jimenez_etal20; @jimenezCOVID19SymptomGoogle2020;
+Google Search Trends have also been used continuously in estimations of
+disease prevalence and population health in journals like the Journal of
+Medical Internet Research. While much of this research has focused on
+the Covid-19 pandemic [@jimenez_etal20;
+@jimenezCOVID19SymptomGoogle2020;
 @limEstimatingInformationSeekingBehaviour2020;
-@mavraganiCOVID19PredictabilityUnited2020; @nguyenGoogleTrendsAnalysis2020;
-@todorovaInternetBasedData2021] , other research has investigated Google Trends
-as an indicator of wellbeing [@brodeurCOVID19LockdownsWellbeing2021;
+@mavraganiCOVID19PredictabilityUnited2020;
+@nguyenGoogleTrendsAnalysis2020; @todorovaInternetBasedData2021] , other
+research has investigated Google Trends as an indicator of wellbeing
+[@brodeurCOVID19LockdownsWellbeing2021;
 @carpiTwitterSubjectiveWellBeing2020; @duCOVID19IncreasesOnline2020],
 suicidality [@burnettTimeTrendsPublic2020], vaccination uptake
 [@dalumhansenEnsembleLearnedVaccination2016], obesity
 [@sarigulNowcastingObesityUsing2014], and even insomnia
 [@zittingGoogleTrendsReveal2020], to cover a few examples. For a partial
 review of other utilizations, see @nutiUseGoogleTrends2014. According to
-@jaidkaInformationseekingVsSharing2021, the majority of studies profess a
-correlation of > .70, “demonstrating the vast potential of Google Search as a
-proxy for monitoring population health” (p. 3) based on assumptions that
-individuals search because of self-diagnosis and to identify possible courses
-of treatment [@dechoudhurySeekingSharingHealth2014].
+@jaidkaInformationseekingVsSharing2021, the majority of studies profess
+a correlation of \> .70, "demonstrating the vast potential of Google
+Search as a proxy for monitoring population health" (p. 3) based on
+assumptions that individuals search because of self-diagnosis and to
+identify possible courses of treatment
+[@dechoudhurySeekingSharingHealth2014].
 
 <!-- Following reports say that Google searches can predict covid  -->
+
 <!-- 14. Brunori, P. & Resce, G. Searching for the peak Google Trends and the Covid-19 outbreak in Italy. SERIES working papers N. 04/2020 -->
+
 <!-- Lampos, V. et al. Tracking COVID-19 using online search. Preprint at https://arxiv.org/abs/2003.08086 (2020). -->
+
 <!-- 16. Walker, A., Hopkins, C. & Surda, P. The use of google trends to investigate the loss of smell related searches during COVID‐19 -->
+
 <!-- outbreak. Int. Forum Allergy Rh. 10, 839–847 (2020). -->
+
 <!-- 17. Stephens-Davidowitz, S. Google Searches Can Help Us Find Emerging Covid-19 Outbreaks. The New York Times https://www. -->
+
 <!-- nytimes.com/2020/04/05/opinion/coronavirus-google-searches.html (2020). -->
+
 <!-- 18. Frank, T. Goldman says fewer ‘loss of smell’ Google queries suggest better COVID outlook. Consumer News and Business Channel. CNBC https://www.cnbc.com/2020/04/15/goldman-says-fewer-loss-of-smell-google-searches-is-a-positive-sign-for-pande -->
+
 <!-- mic.html (2020) -->
 
-
-Various sources have also used Google Trends as a way to forecast political
-elections and political attitudes [@wolfTrendingRightDirection2018]. For
-instance, @swearingenGoogleInsightsSenate2014 investigate how U.S. Senate
+Various sources have also used Google Trends as a way to forecast
+political elections and political attitudes
+[@wolfTrendingRightDirection2018]. For instance,
+@swearingenGoogleInsightsSenate2014 investigate how U.S. Senate
 Elections relate to attention measured by search traffic.
-@prado-romanGoogleTrendsPredictor2020 compare how Google Search trends are able
-to predict presidential election results in both the United States and Canada.
-Finally, the OECD Development Centre is investigating how Google data can help
-elucidate governments’ approval in Latin America [@montoyaUsingGoogleData2020].
+@prado-romanGoogleTrendsPredictor2020 compare how Google Search trends
+are able to predict presidential election results in both the United
+States and Canada. Finally, the OECD Development Centre is investigating
+how Google data can help elucidate governments' approval in Latin
+America [@montoyaUsingGoogleData2020].
 
+Research Question - How can we operationalize Google Search Trends as a
+valid indicator for uses in social science research?
 
-Research Question - How can we operationalize Google Search Trends as a valid
-indicator for uses in social science research?
+<https://journals.sagepub.com/doi/10.1177/0894439316631043> § What
+constructs might google trends capture and not capture well? Capture
+attention but not attitudes
 
-
-https://journals.sagepub.com/doi/10.1177/0894439316631043
-			§ What constructs might google trends capture and not capture well? 
-Capture attention but not attitudes 
-
-Also Asseo - "we assumed that media coverage may potentially decouple the search
-popularity from the number of cases, since searches would result not only from
-self-symptoms, but also from interest elicited by media coverage."
-
-
-
-
-
-
-
-
-
-
-
-
-
+Also Asseo - "we assumed that media coverage may potentially decouple
+the search popularity from the number of cases, since searches would
+result not only from self-symptoms, but also from interest elicited by
+media coverage."
 
 # Research Methodology
 To investigate the construct and criterion validity of the use of Google Trends
-in these three areas, I will gather geo-located data from a sources related to
-each case and use Pearson’s r for pairwise correlations, testing for the
-strength of relationship between the Google Trend indicator and the respective
-comparison indicator. Pairwise correlations allow for testing of nested data,
-allowing for multiple search terms to be compared across locations
-simultaneously as well as comparing change over time. I will test both raw
-questions with raw trends as well as using dimensionality reduction through
-factor analysis and principal components analysis (PCA). In addition, I’d like
-to explore how this data would cluster locations together using tools like
-blockmodeling and other clustering techniques.
+in these three areas, I gathered geo-located social science data across multiple
+sources to address the three areas of inquiry for this paper.  Table
+\@ref(tab:data-sources-table) outlines which data sources are used for this
+project and which trends are matched to each source.
 
-To investigate the correlation between Google search trends, I will use
-questions from the NORC General Social Survey. I will need to obtain an $800
-grant to purchase geolocated data from NORC for this project. I plan to submit a
-small grant application to SBS to receive these funds. I will use various NORC
-GSS cultural value questions and aggregate the relevant zip code up to Nielsen’s
-metropolitan market area (MMA), the level Google trends are aggregated to, using
-population weighting.
+```{r data-sources-table}
+#| results='asis',
+#| tab.cap = 'airquality dataset caption here'
 
-For disease prevalence, I will use United States county-level suicide rates from
-National Center for Health Statistics, US cases rates of Covid-19 from The New
-York Times, and obesity rates to compare search trends to observable data.
+data_sources <- tibble::tribble(
+~Validated.Data.Source, ~Type, ~Dates, ~Google.Trends.Used,
+"General Social Survey", "Cross-Sectional", "2010 - 2020", NA,
+ 
+"Vaccine Hesitancy for COVID-19", "Cross-Sectional", "March 3 – 15, 2021", "covid conspiracy', 'COVID-19 vaccine', 'Coronavirus', 'Covid-19'",
+ 
+"Mask-Wearing Survey Data", "Cross-Sectional", "July 2 - 14, 2020", "'Face Mask', 'Mask', 'Cloth Face Mask'",
+ 
+ "Covid Rates", "Longitudinal", "Every Monday, 2020 - 2021", "'Covid-19', 'Coronavirus', 'Taste Loss', 'Smell Loss'",
+ 
+"County Suicide Rates", "Longitudinal", "Yearly 2010-2020", "'Suicide', 'Depression',' Suicide Hotline'",
 
-Finally, I’ll test Google Trends as an operationalization of political attitudes
-by looking at actual voting outcomes in historical US Presidential Election
-results and the American National Election Survey and Google Trends about
-candidates.
+"American National Election Survey", "Cross-Sectional", "2020", NA,
+ 
+"Presidential Election Results", "Cross Sectional", "2016 & 2020", "'Hilary Clinton', 'Donald Trump', 'Joe Biden'"
+ )
 
-```{r}
-tibble::tribble(
-                                ~Validated.source, ~Google.trend.equivalent,
-                                            "GSS",                       NA,
-  "Suicide,\\nCovid-19 rates\\nVaccine hesitancy",                       NA,
-           "Presidential Voting outcomes,\\nANES",                       NA
-  )
+data_sources %>% 
+  kbl() %>%
+  # group rows
+  pack_rows("Behaviors and Attitudes", 1,3, background = '#bad7db', bold = T) %>% 
+  pack_rows("Health", 4,5, background = '#bad7db', bold = T) %>% 
+  pack_rows('Political', 6,7, background = '#bad7db', bold = T) %>% 
+  # header style
+  row_spec(0, background = my_palette[8], color = 'white', bold = T) %>% 
+  #overall styling
+  kable_styling(latex_options = c( "hold_position"), full_width = T)
 
 ```
 
 
-
-
 ## Measures
-### attitudinal
-• Vaccine Hesitancy
-		○ https://data.cdc.gov/Vaccinations/Vaccine-Hesitancy-for-COVID-19-County-and-local-es/q9mh-h2tw/data
+### Google Trends
+This paper focuses on a validation of Google search trends [@googletrends].
+Google trends portray the search frequency for specific search terms across
+designated media markets areas (DMAs), a nonoverlapping aggregation of U.S.
+counties to 210 media markets based on similar population clusters [@dma_key].
+Raw data is on a scale from 0 to 100, with 100 being the maximum search
+popularity out of all DMAs. Google Search Trend are now only available
+cross-sectionally (a single time period across a geography) or as time-series (a
+single geo-location across time). To remedy this and build a longitudinal
+dataset of each search topic for the longitudinal datasets, I follow the method
+proposed in @park_etal (p. 5). This method involves building a dataset of
+unscaled cross-sectional values, selecting a DMA to use to establish the
+rescaling ratio (I use 'Los Angeles CA'), and then finding the time-series
+values for the one DMA. To find the rescaling ratio for each week in the
+time-series, you divide the time-series value for each week by the
+cross-sectional value for each week, resulting in a rescaling vector to be used
+for all weeks in the dataset across geographies. To rescale each longitudinal
+value, multiply the respective week's rescaling ratio by the cross-sectional
+value. Rescaled longitudinal data was compared against time-series data for
+multiple test counties and was equivalent. For a more in-depth explanation of
+this procedure, see @park_etal (p. 5). Missing datapoints in longitudinal
+datasets were filled in with interpolated values using `zoo::na.approx()`
+[@zoo].
 
-• Mask Usage
-		○ New York Times Survey
+
+### attitudinal
+
+<!-- [@gss_data] (let's see if I get access first) -->
+
+One measure of attitudinal indicators is the Vaccine Hesitancy for COVID-19
+[@vaches_data]. The CDC uses the U.S. Census Bureau’s Household Pulse Survey
+(HPS) and the 2019 American Community Survey (ACS) 1-year Public Use Microdata
+Sample (PUMS) to measure U.S. residents’ intentions to receive the COVID-19
+vaccine if available during May 26, 2021 – June 7, 2021. This dataset consists
+of `r nrow(vacc_hes)` observations, one for each U.S. County.
+
+Another attitudinal indicator I use is the Mask-Wearing Survey Data conducted by
+Dynata for the New York Times from July 2 through 14, 2020 [@mask_data]. 250,000
+survey respondents were asked, "How often do you wear a mask in public when you
+expect to be within six feet of another person?". The NYT weighted each response
+to create a county level measure of what percent of the county never, rarely,
+sometimes, frequetly, and always wore a mask when in public. This dataset
+consists of `r nrow(mask)` observations, one for each U.S. County.
+
 
 ### health
-• Covid Rates
-		○ https://github.com/nytimes/covid-19-data/tree/master/rolling-averages
 
-• Suicide
-		○ https://wonder.cdc.gov/mcd.html 
-		○ Multiple Cause of Death Data 2019 (see notes for which variables count)
+I first use U.S. Covid-19 rates to validate health and disease related topics. I
+retrieve U.S. county-level Covid-19 rates from by @covid_data, who compile this
+data based on reports from state and local health agencies. It is widely
+acknowledged that there are biases in this data due to inconsistencies and
+availability in testing as well as different community propensity to test
+[@gu22; @cdc20a] However, it is the best measure we have of actual case rates.
+Case Rate is measured as number of cases per 100,000 population. Observations
+vary from a minimum of 0 to a maximum of `r max(covid$covid_rate))` for each 
+Monday from `r glue("{format( min(covid$date), '%B %d, %Y')} through {format(max(covid$date), '%B %d, %Y')}")`.
+There are `r nrow(covid)` cases across `r nrow(count(covid, fips))` 
+counties and `r nrow(count(covid, date))` dates. Missing data were interpolated 
+using `zoo::na.approx()` [@zoo].
+
+I also use county-level suicide rates from the US Centers for Disease Control
+and Prevention [-@suic_data]. Data is grouped by year from 2010-2020. Raw death
+rates are scaled by population size for each year. There are `r nrow(suicide)` 
+total cases, resulting from `r nrow(count(suicide, year))` observations of 
+`r nrow(count(suicide, fips))` counties. Missing data were interpolated 
+using `zoo::na.approx()` [@zoo].
 
 ### political
-• Presidential results
-		○ https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/VOQCHQ
-		○ MIT Election Data and Science Lab, 2018, 
-		○ "County Presidential Election Returns 2000-2020",
-		○ https://doi.org/10.7910/DVN/VOQCHQ, 
-		○ Harvard Dataverse, V9
+Finally, I test Google Trends as an operationalization of political
+attitudes by first looking at actual voting outcomes in historical US
+Presidential Election results. This data comes from @pres_data, who scraped the
+results from Townhall.com, Fox News, Politico, and the New York Times. Data on 
+presidential outcomes were avaiable for `r nrow(pres_2016)` counties in 2016 and
+`r nrow(pres_2020)` counties in 2020.
 
-### Independent Variables
+In addition, I use data on political opinions from the the American National
+Election Survey 2020 Time-Series Study [@anes_data]. This data is paired with
+restricted data provided by ICPSR, the Inter-university Consortium for Political
+and Social Research, that contains the geo-ids of the `r 5,441` survey respondents.
+The study interviewed respondents in a pre-election survey that was conducted
+between August 18, 2020 and the day of the US Presidential election day,
+November 3, 2020.
+
 ## Analysis
-# Results
-## Cultural
-## Medical
-## Political
-# Discussion
-While I expect these tests to show high correlation between observed indicators
-and Google search trends, there will be three important questions that surface.
-First, just because something is correlated, does that mean it can replace the
-collection of other types of data? Second, how correlated does a trend need to
-be for social scientists to justifiably rely on it to indicate some outcome? And
-finally, how can we construct analyses like this to be robust to changes in the
-terms used across time and location?
+For cross-sectional numeric data, I use the Pearson correlation formula (formula
+\@ref(eq:pearsoncorr)) to calculate the strength of the relationship between
+each Google Trend and the respective datasource. 
 
-The purpose of this paper is more methodological than theoretical, and I see
-this paper having an impact on the social sciences and computational social
-science as researchers pursue more projects using this source of big data.
-Google Trends are relatively underutilized in the field compared to in the
-health sciences and business. Once I assess how this data can be used, I would
-like to be able to join @bailCulturalEnvironmentMeasuring2014 in encouraging social scientists to pursue
-more research with big data while taking into account the potential pitfalls
-with any source of big data [@mcfarlandBigDataDanger2015].
+\begin{equation}
+ r =
+  \frac{ \sum_{i=1}^{n}(x_i-\bar{x})(y_i-\bar{y}) }{
+        \sqrt{\sum_{i=1}^{n}(x_i-\bar{x})^2}\sqrt{\sum_{i=1}^{n}(y_i-\bar{y})^2}} (\#eq:pearsoncorr)
+\end{equation}
+
+To address longitudinal correlations, I employ Repeated Measures Correlation
+[@bland1995] using the `rmcorr` package in R [@bakdash2017]. Repeated Measures
+Correlation is useful for determining the within-individual association for
+paired measures across time and individuals.
+
+I test both the raw trends, as well a combination of trends created
+through factor analysis as a method of dimensionality reduction.
+
+As an additional test of correlation, I employ multiple linear
+regression to identify the strength of relationships across locales: I
+include city-data like county population size, internet usage rates, and
+Z to attempt to disentangle why some individual cases may be better predicted by
+Google Trends while others may not.
+
+
+visualizations made with [@wickham11; @wickham_etal]
+
+# Results
+
+## Cultural
+
+## Medical
+
+```{r}
+covid_corr <- rmcorr::rmcorr(fips, measure1 = covid_rate, measure2 = covid_19, dataset = covid)
+
+
+covid_reg <- lm(covid_rate ~ covid_19 + smell_loss + taste_loss, data = covid)
+
+```
+
+```{r}
+suicide_corr <- rmcorr::rmcorr(fips, measure1 = death_rate, measure2 = suicide, dataset = suicide)
+
+
+suicide_reg <- lm(death_rate ~ suicide + depression + suicide_hotline, data = suicide)
+summary(suicide_reg)
+
+library(nlme)
+
+suicide <- suicide %>% 
+  drop_na()
+suicide_lme <- lme(fixed = death_rate ~ suicide + depression + suicide_hotline,
+             random = ~ 1 | fips,
+             data = suicide)
+summary(suicide_lme)
+```
+
+## Political
+
+# Discussion
+
+While I expect these tests to show high correlation between observed
+indicators and Google search trends, there will be three important
+questions that surface. First, just because something is correlated,
+does that mean it can replace the collection of other types of data?
+Second, how correlated does a trend need to be for social scientists to
+justifiably rely on it to indicate some outcome? And finally, how can we
+construct analyses like this to be robust to changes in the terms used
+across time and location?
+
+The purpose of this paper is more methodological than theoretical, and I
+see this paper having an impact on the social sciences and computational
+social science as researchers pursue more projects using this source of
+big data. Google Trends are relatively underutilized in the field
+compared to in the health sciences and business. Once I assess how this
+data can be used, I would like to be able to join
+@bailCulturalEnvironmentMeasuring2014 in encouraging social scientists
+to pursue more research with big data while taking into account the
+potential pitfalls with any source of big data
+[@mcfarlandBigDataDanger2015].
 
 # Conclusion
 
 \newpage
 
-# References {-}
+# References {.unnumbered}
 
-<div id="refs"></div>
+::: {#refs}
+:::
 
 \newpage
 

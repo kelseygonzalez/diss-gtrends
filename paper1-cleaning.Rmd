@@ -191,7 +191,7 @@ vacc_hes_gtrends <- find_cross_sectional_trends(c('covid conspiracy',
                                                   # URLdecode('%2Fg%2F11j8_9sv06'),
                                                   # URLdecode('%2Fg%2F11j2cc_qll')
                                                   ), 
-                            '2021-03-03', 12) %>%   
+                            '2021-05-26', 12) %>%   
   pivot_wider(names_from = keyword, values_from = hits)  %>% 
   select(-date) %>% 
   janitor::clean_names()
@@ -226,7 +226,6 @@ mask_data <- read_csv('https://raw.githubusercontent.com/nytimes/covid-19-data/m
 
 mask_gtrends <- find_cross_sectional_trends(c('Face mask',
                                               'Mask',
-                                              # 'Civil and political rights',
                                               'Cloth face mask'
                                               ),
                                             '2020-07-02', 12)%>%   
@@ -272,6 +271,10 @@ covid_gtrend_2020 <- find_year_trends('Covid-19', 2020)
 covid_gtrend_2021 <- find_year_trends('Covid-19', 2021) 
 covid_gtrend  <- covid_gtrend_2020 %>% bind_rows(covid_gtrend_2021) 
 
+corona_gtrend_2020 <- find_year_trends('Coronavirus', 2020) 
+corona_gtrend_2021 <- find_year_trends('Coronavirus', 2021) 
+corona_gtrend  <- corona_gtrend_2020 %>% bind_rows(corona_gtrend_2021) 
+
 taste_gtrend_2020 <- find_year_trends('Taste Loss', 2020) 
 taste_gtrend_2021 <- find_year_trends('Taste Loss', 2021) 
 taste_gtrend  <- taste_gtrend_2020 %>% bind_rows(taste_gtrend_2021) 
@@ -300,6 +303,16 @@ covid %>%
   facet_wrap(~ glue('{county}, {state}'), scale = 'free_y') + 
   theme_minimal()
 
+
+covid <- covid %>% 
+  left_join(corona_gtrend, by = c('DMA_google', 'date')) %>% 
+  group_by(fips) %>%
+  mutate(covid_rate  = na.approx(covid_rate, na.rm = FALSE),
+         covid_19    = na.approx(covid_19, na.rm = FALSE),
+         coronavirus = na.approx(coronavirus, na.rm = FALSE),
+         taste_loss  = na.approx(taste_loss, na.rm = FALSE),
+         smell_loss  = na.approx(smell_loss, na.rm = FALSE))
+
 write_rds(covid, here('data', 'cleaned_data', 'covid.rds'))
 
 ```
@@ -310,52 +323,63 @@ write_rds(covid, here('data', 'cleaned_data', 'covid.rds'))
 dates - 2019 cross sectional inclusive
 
 ```{r suicide}
-suicide_measures_both <- read_delim(here('data','suicide',
-                                    'Multiple Cause of Death, 1999-2020.txt')) %>% 
+# suicide_measures_both <- read_delim(here('data','suicide',
+#                                     'Multiple Cause of Death, 1999-2020.txt')) %>% 
+#   janitor::clean_names() %>% 
+#   filter(is.na(notes)) %>% 
+#   select(fips = county_code, county, year = year_code, deaths_both = deaths, population)
+# 
+# suicide_measures_mcd <- read_delim(here('data','suicide',
+#                                     'Multiple Cause of Death, 1999-2020 only multiple cause.txt')) %>% 
+#   janitor::clean_names() %>% 
+#   filter(is.na(notes)) %>% 
+#   select(fips = county_code, county, year = year_code, deaths_mcd = deaths)
+# 
+# breaks <-  c(10,20,40,60,100,200,400,700,1300)
+# suicide_measures <- suicide_measures_both %>% 
+#   left_join(suicide_measures_mcd, by = c('fips', 'county', 'year')) %>% 
+#   mutate(deaths_mcd = na_if(deaths_mcd,'Missing'),
+#          deaths_both = na_if(deaths_both,'Missing'),
+#          deaths_mcd_supp = ifelse(deaths_mcd == 'Suppressed', '(0:9]', NA), 
+#          deaths_both_supp = ifelse(deaths_both == 'Suppressed', '(0:9]', NA), 
+#          deaths_mcd = na_if(deaths_mcd,'Suppressed'),
+#          deaths_both = na_if(deaths_both,'Suppressed'),
+#          deaths_mcd_cut = as.character(cut(as.numeric(deaths_mcd), breaks = breaks)),
+#          deaths_both_cut = as.character(cut(as.numeric(deaths_both), breaks = breaks)),
+#          deaths_mcd_cut = ifelse(!is.na(deaths_mcd_supp),
+#                                  deaths_mcd_supp,
+#                                  deaths_mcd_cut), 
+#          deaths_both_cut = ifelse(!is.na(deaths_both_supp),
+#                                   deaths_both_supp,
+#                                   deaths_both_cut)) %>% 
+#         select(fips, county, year, deaths_both_cut) %>% 
+#   mutate(deaths = factor(deaths_both_cut, ordered = T),
+#          deaths = fct_relevel(deaths, c("(0:9]",
+#                                         "(10,20]",
+#                                         "(20,40]", 
+#                                         "(40,60]",
+#                                         "(60,100]",    
+#                                         "(100,200]",
+#                                         "(200,400]",
+#                                         "(400,700]",   
+#                                         "(700,1.3e+03]")))
+# suicide_measures %>% 
+#   count(year, deaths) %>%
+#   ggplot(aes(x = deaths, y = n)) +
+#   geom_bar(stat = 'identity') +
+#   facet_wrap(~year)        
+
+suicide_measures <- read_delim(here('data','suicide',
+                                    'Multiple Cause of Death, 1999-2020 only multiple cause.txt'),
+                               show_col_types = FALSE) %>% 
   janitor::clean_names() %>% 
   filter(is.na(notes)) %>% 
-  select(fips = county_code, county, year = year_code, deaths_both = deaths, population)
-
-suicide_measures_mcd <- read_delim(here('data','suicide',
-                                    'Multiple Cause of Death, 1999-2020 only multiple cause.txt')) %>% 
-  janitor::clean_names() %>% 
-  filter(is.na(notes)) %>% 
-  select(fips = county_code, county, year = year_code, deaths_mcd = deaths)
-
-breaks <-  c(10,20,40,60,100,200,400,700,1300)
-suicide_measures <- suicide_measures_both %>% 
-  left_join(suicide_measures_mcd, by = c('fips', 'county', 'year')) %>% 
-  mutate(deaths_mcd = na_if(deaths_mcd,'Missing'),
-         deaths_both = na_if(deaths_both,'Missing'),
-         deaths_mcd_supp = ifelse(deaths_mcd == 'Suppressed', '(0:9]', NA), 
-         deaths_both_supp = ifelse(deaths_both == 'Suppressed', '(0:9]', NA), 
-         deaths_mcd = na_if(deaths_mcd,'Suppressed'),
-         deaths_both = na_if(deaths_both,'Suppressed'),
-         deaths_mcd_cut = as.character(cut(as.numeric(deaths_mcd), breaks = breaks)),
-         deaths_both_cut = as.character(cut(as.numeric(deaths_both), breaks = breaks)),
-         deaths_mcd_cut = ifelse(!is.na(deaths_mcd_supp),
-                                 deaths_mcd_supp,
-                                 deaths_mcd_cut), 
-         deaths_both_cut = ifelse(!is.na(deaths_both_supp),
-                                  deaths_both_supp,
-                                  deaths_both_cut)) %>% 
-        select(fips, county, year, deaths_both_cut) %>% 
-  mutate(deaths = factor(deaths_both_cut, ordered = T),
-         deaths = fct_relevel(deaths, c("(0:9]",
-                                        "(10,20]",
-                                        "(20,40]", 
-                                        "(40,60]",
-                                        "(60,100]",    
-                                        "(100,200]",
-                                        "(200,400]",
-                                        "(400,700]",   
-                                        "(700,1.3e+03]")))
-suicide_measures %>% 
-  count(year, deaths) %>%
-  ggplot(aes(x = deaths, y = n)) +
-  geom_bar(stat = 'identity') +
-  facet_wrap(~year)        
-  
+  select(fips = county_code, county, year = year_code, deaths, population) %>% 
+  mutate(across(c(deaths, population), ~na_if(.x,'Missing')),
+         deaths = ifelse(deaths == 'Suppressed', '9', deaths), 
+         population = na_if(population,'Suppressed'),
+         across(c(deaths, population), as.numeric),
+         death_rate = (deaths/ population) * 1000)
   
 append_years <- function(year_begin, year_end){
   years <- seq(year_begin,year_end,1)
@@ -384,14 +408,22 @@ suicide <- suicide_measures %>%
   full_join(suicide_gtrends, by = c('DMA_google' = 'location', 'year' = 'year'))  %>% 
   janitor::clean_names()
 
+suicide <- suicide %>% 
+  group_by(fips) %>%
+  mutate(deaths           = na.approx(deaths, na.rm = FALSE),
+         population       = na.approx(population, na.rm = FALSE),
+         suicide          = na.approx(suicide, na.rm = FALSE),
+         depression       = na.approx(depression, na.rm = FALSE),
+         suicide_hotline  = na.approx(suicide_hotline, na.rm = FALSE))
+
 write_rds(suicide, here('data', 'cleaned_data', 'suicide.rds'))
 
 suicide %>% 
   filter(fips %in% c("08003", '55057', '51059', '39085', 
            # '36119',
            '34021', '12071', '04017')) %>% 
-  mutate(`actual deaths` = as.numeric(deaths) * 10) %>% 
-  pivot_longer(cols = c('suicide', 'depression', 'suicide_hotline', 'actual deaths')) %>% 
+  mutate(death_rate = death_rate * 100) %>% 
+  pivot_longer(cols = c('suicide', 'depression', 'suicide_hotline', 'death_rate')) %>% 
   ggplot(aes(x = year, y = value, group = name, color = name)) +
   geom_line() + 
   geom_point() +
