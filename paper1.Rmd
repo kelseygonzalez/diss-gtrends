@@ -44,8 +44,7 @@ knitr::opts_chunk$set(echo = FALSE,
 
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(tidyverse, glue, extrafont, here, jtools, psych,
-               modelsummary, showtext, thematic, kableExtra, scales,
-               rmcorr)
+               modelsummary, showtext, thematic, kableExtra, scales)
 
 my_palette = c('#56b4e9','#999999','#E69F00','#009E73','#CC79A7','#0072B2','#D55E00','#E69F00')
 my_palette  <- c(MetBrewer::met.brewer(name = 'Cross', type = 'discrete'), '#555F61')
@@ -100,6 +99,15 @@ theme_diss <- function(base_size = 14) {
 }
 
 theme_set(theme_diss()) 
+
+stars <- function(p.value){
+  unclass(symnum(p.value, 
+                 corr = FALSE, 
+                 na = FALSE, 
+                 cutpoints = c(0, 0.001, 0.01, 0.05, 1), 
+                 symbols = c("***", "**", "*", " ")))
+}
+
 
 ```
 ```{r data}
@@ -375,6 +383,24 @@ The study interviewed respondents in a pre-election survey that was conducted
 between August 18, 2020 and the day of the US Presidential election day,
 November 3, 2020.
 
+### Other
+
+ACS 1 year estimates
+a00001 total population
+a00002 population density
+a17005 unemployment rate 16+
+a14006 median income
+a09003 average commute time
+poverty percent
+01001B 65 plus
+
+broadband percent 
+[@internet_use]
+
+
+
+
+
 ## Analysis
 For cross-sectional numeric data, I use the Pearson correlation formula (formula
 \@ref(eq:pearsoncorr)) to calculate the strength of the relationship between
@@ -387,19 +413,17 @@ each Google Trend and the respective datasource.
 \end{equation}
 
 To address longitudinal correlations, I employ Repeated Measures Correlation
-[@bland1995] using the `rmcorr` package in R [@bakdash2017]. Repeated Measures
-Correlation is useful for determining the within-individual association for
-paired measures across time and individuals.
+using the `rmcorr` package in R [@bland1995; @bakdash2017]. Repeated Measures
+Correlation is useful for determining the within-county association for paired
+measures across time and counties.
 
-I test both the raw trends, as well a combination of trends created
-through factor analysis as a method of dimensionality reduction.
-
-As an additional test of correlation, I employ multiple linear
+As an additional test of the relationships, I employ multiple linear
 regression to identify the strength of relationships across locales: I
-include city-data like county population size, internet usage rates, and
-Z to attempt to disentangle why some individual cases may be better predicted by
-Google Trends while others may not.
-
+include city-data like county population size, in-home internet rates, and
+median income to attempt to disentangle possible confounders of the relationship 
+between Google search Trends and verified indicators. Identifying these possible
+confounded relationships will help to explain why some articles find relationships
+between the trends and outcomes while others did not. 
 
 visualizations made with [@wickham11; @wickham_etal]
 
@@ -407,18 +431,60 @@ visualizations made with [@wickham11; @wickham_etal]
 
 ## Cultural
 
+### vacc_hes 
+```{r vacc_hes_analysis}
+
+vacc_hes %>% 
+  kbl(digits=4) %>%
+  #overall styling
+  kable_styling(latex_options = c( "hold_position"), full_width = T)
+
+vacc_hes_reg <- lm(vacc_hesitant  ~ covid_conspiracy +covid_19_vaccine +coronavirus +covid_19, data = vacc_hes)
+```
+
+vacc_hes correlations
+rsquared
+
+
+### mask 
+
+
+
 ## Medical
+### covid     
+
 
 ```{r}
-covid_corr <- rmcorr::rmcorr(fips, measure1 = covid_rate, measure2 = covid_19, dataset = covid)
 
+covid_corrs <- read_rds(here('data', 'from_hpc', 'covid_corrs.rds'))
+covid_corrs[1,1] <- "Covid Rate, Pearson's R Correlation"
+write_rds(covid_corrs, here('data', 'from_hpc', 'covid_corrs.rds'))
+
+
+covid_corrs %>% 
+  kbl(digits=4) %>%
+  #overall styling
+  kable_styling(latex_options = c( "hold_position"), full_width = T)
 
 covid_reg <- lm(covid_rate ~ covid_19 + smell_loss + taste_loss, data = covid)
 
 ```
+### suicide   
+
 
 ```{r}
-suicide_corr <- rmcorr::rmcorr(fips, measure1 = death_rate, measure2 = suicide, dataset = suicide)
+
+suicide_corrs <- read_rds(here('data', 'from_hpc', 'suicide_corrs.rds'))
+suicide_corrs[1,1] <- "Death by Suicide Rate, Pearson's R Correlation"
+suicide_corrs[2,1] <- "Death by Suicide Rate, rmcorr"
+
+write_rds(suicide_corrs, here('data', 'from_hpc', 'suicide_corrs.rds'))
+
+
+suicide_corrs %>% 
+  kbl(digits=4) %>%
+  #overall styling
+  kable_styling(latex_options = c( "hold_position"), full_width = T)
 
 
 suicide_reg <- lm(death_rate ~ suicide + depression + suicide_hotline, data = suicide)
@@ -434,7 +500,43 @@ suicide_lme <- lme(fixed = death_rate ~ suicide + depression + suicide_hotline,
 summary(suicide_lme)
 ```
 
+```{r factor-analysis}
+library(psych)
+library(nFactors)
+library(corrplot)
+
+dat <- suicide %>% ungroup() %>% 
+  select(death_rate, suicide, depression, suicide_hotline) %>% 
+  drop_na() 
+
+round(cor(dat, use="complete.obs"),2)
+corrplot(cor(dat, use="complete.obs"), order = "hclust", tl.col='black', tl.cex=.75) 
+
+
+EFAresult1 = factanal(~ ., data=dat, factors = 1, rotation = "varimax", 
+                      na.action = na.exclude) #note the formula specification allows NA 
+EFAresult1
+# First, we can look at the sums of squared (SS) loadings; these are the
+# eigenvalues, or the variance in all variables which is accounted for by that
+# factor (i.e., the eigenvalue/# of variables = proportion variance). If a
+# factor has a “high” SS loading (i.e., eigenvalue), then it is helping to
+# explain the variances in the variables. In the factanal() output, the factors
+# are ordered by their eigenvalues, with higher eigenvalues first.
+#
+# A general rule-of-thumb called the Kaiser Rule, is that a factor is
+# important/useful if its eigenvalue is greater than 1 (i.e., the average),
+# Here, factors 1-6 appear to be important. There are other ways to choose the
+# number of factors, we will look at later.
+#
+# To illustrate how the eigenvalue is calculated.
+
+```
+
 ## Political
+### pres_2016 
+
+### pres_2020 
+
 
 # Discussion
 

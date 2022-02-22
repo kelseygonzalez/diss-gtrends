@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(tidyverse, glue, here, vroom, gtrendsR,
-               lubridate, zoo)
+               lubridate, zoo, readxl, tidycensus)
 
 ```
 
@@ -168,6 +168,329 @@ dma <- dma %>%
   full_join(dma_key)
 ```
 
+# county_data
+
+```{r census_api_to_delete}
+# load ACS demographic data
+tidycensus::census_api_key("a78281136605c66d53cf0abd929a5f2101e92a28", overwrite = TRUE, install = TRUE)
+readRenviron("~/.Renviron")
+
+# v19 <- load_variables(2019, "acs5", cache = TRUE)
+# v19_p <- load_variables(2019, "acs5/profile", cache = TRUE)
+# v19_s <- load_variables(2019, "acs5/subject", cache = TRUE)
+
+acs_2010_2016 <- c(Bachelor_higher_25pl = "DP02_0065P",
+              employment_rate = "DP03_0009P",
+              commute_time = 'DP03_0025',
+              median_family_income = 'DP03_0086',
+              perc_poverty = 'DP03_0119P',
+              total_population =	"B01003_001",
+              perc_65_over = "DP05_0021P",
+              
+              
+              
+              `TotalLabor Force` ='B23025_003',
+              Employed ='B23025_004',
+              Unemployed ='B23025_005',
+              
+              pop25_under = B19037_002,
+              pop18_over = B16003_008,
+              bachelor_n = B16010_041,
+              )
+
+acs_2017_2019 <- c(Bachelor_higher_25pl = "DP02_0065P",
+              employment_rate = "DP03_0009P",
+              commute_time = 'DP03_0025',
+              median_family_income = 'DP03_0086',
+              perc_poverty = 'DP03_0119P',
+              total_population =	"B01003_001",
+              perc_65_over = "DP05_0024P")
+
+##############
+get_acs_5yr <- function(year){
+  vars <- ifelse(year >= 2017, acs_2017_2019, acs_2010_2016)
+  result <- get_acs(geography = "county", 
+                    variables = vars,
+                    survey = "acs5",
+                    year = year) 
+  
+  result <- result %>% 
+    mutate(state = str_split_fixed(NAME, ", ", 2)[,2],
+           county = str_split_fixed(NAME, ", ", 2)[,1]) %>% 
+    select(-moe, -NAME, fips = GEOID) %>% 
+    pivot_wider(id_cols = c("fips", "state", "county"), 
+                names_from = "variable",
+                values_from = "estimate") %>% 
+    mutate(year = year)
+  
+  return(result)
+}
+
+acs_data <- tibble(
+  "fips" = character(),
+  "state" = character(),
+  "county" = character(),
+  "Bachelor_higher_25pl" = numeric(),
+  "wifiathome" = numeric(),
+  "employment_rate" = numeric(),
+  "commute_time" = numeric(),
+  "median_family_income" = numeric(),
+  "perc_poverty" = numeric(),
+  "total_population" = numeric(),
+  "perc_65_over" = numeric(),
+  "year" = numeric()
+)
+
+acs_data <- get_acs_5yr(2010) %>% 
+        bind_rows(acs_data)
+Sys.sleep(10) 
+
+acs_data <- get_acs_5yr(2011) %>% 
+        bind_rows(acs_data)
+Sys.sleep(10) 
+
+acs_data <- get_acs_5yr(2012) %>% 
+        bind_rows(acs_data)
+Sys.sleep(10) 
+
+acs_data <- get_acs_5yr(2013) %>% 
+        bind_rows(acs_data)
+Sys.sleep(10) 
+
+acs_data <- get_acs_5yr(2014) %>% 
+        bind_rows(acs_data)
+Sys.sleep(10) 
+
+acs_data <- get_acs_5yr(2015) %>% 
+        bind_rows(acs_data)
+Sys.sleep(10) 
+
+acs_data <- get_acs_5yr(2016) %>% 
+        bind_rows(acs_data)
+Sys.sleep(10) 
+
+acs_data <- get_acs_5yr(2017) %>% 
+        bind_rows(acs_data)
+Sys.sleep(10) 
+
+acs_data <- get_acs_5yr(2018) %>% 
+        bind_rows(acs_data)
+Sys.sleep(10) 
+
+acs_data <- get_acs_5yr(2019) %>% 
+        bind_rows(acs_data)
+Sys.sleep(10) 
+
+acs_data %>% write_rds(here("data", "county-data","acs_from_api.rds"))
+```
+
+```{r social_explorer}
+acs <- read_csv(here("data", "county-data","acs_2010.csv"))  %>% 
+  rowwise() %>% 
+  mutate(unemployment_rate = SE_A17005_003 / SE_A17005_001,  
+         over_65 = SE_A01001B_010  / SE_A01001B_001,        
+         poverty_rate = SE_A13002_002 / SE_A13002_001,
+         year = 2010) %>% 
+  select(fips = Geo_FIPS, Geo_QName, year,
+         total_pop = SE_A00001_001, 
+         pop_density = SE_A00002_002,         
+         unemployment_rate,         
+         over_65,           
+         poverty_rate, 
+         median_income = SE_A14006_001,
+         commute = SE_A09003_001)
+
+acs <- read_csv(here("data", "county-data","acs_2011.csv"))  %>% 
+  rowwise() %>% 
+  mutate(unemployment_rate = SE_A17005_003 / SE_A17005_001,  
+         over_65 = SE_A01001B_010  / SE_A01001B_001,        
+         poverty_rate = SE_A13002_002 / SE_A13002_001,
+         year = 2011) %>% 
+  select(fips = Geo_FIPS, Geo_QName, year,
+         total_pop = SE_A00001_001, 
+         pop_density = SE_A00002_002,        
+         unemployment_rate,       
+         over_65,     
+         poverty_rate, 
+         median_income = SE_A14006_001,
+         commute = SE_A09003_001) %>% 
+  bind_rows(acs)
+
+acs <- read_csv(here("data", "county-data","acs_2012.csv"))  %>% 
+  rowwise() %>% 
+  mutate(unemployment_rate = SE_A17005_003 / SE_A17005_001, 
+         over_65 = SE_A01001B_010  / SE_A01001B_001,    
+         poverty_rate = SE_A13002_002 / SE_A13002_001,
+         year = 2012) %>% 
+  select(fips = Geo_FIPS, Geo_QName, year,
+         total_pop = SE_A00001_001, 
+         pop_density = SE_A00002_002,         
+         unemployment_rate,          
+         over_65,           
+         poverty_rate, 
+         median_income = SE_A14006_001,
+         commute = SE_A09003_001) %>% 
+  bind_rows(acs)
+
+acs <- read_csv(here("data", "county-data","acs_2013.csv"))  %>% 
+  rowwise() %>% 
+  mutate(unemployment_rate = SE_A17005_003 / SE_A17005_001,    
+         over_65 = SE_A01001B_010  / SE_A01001B_001,        
+         poverty_rate = SE_A13002_002 / SE_A13002_001,
+         year = 2013) %>% 
+  select(fips = Geo_FIPS, Geo_QName, year,
+         total_pop = SE_A00001_001, 
+         pop_density = SE_A00002_002,          
+         over_65,         
+         poverty_rate, 
+         unemployment_rate,
+         median_income = SE_A14006_001,
+         commute = SE_A09003_001) %>% 
+  bind_rows(acs)
+
+acs <- read_csv(here("data", "county-data","acs_2014.csv"))  %>% 
+  rowwise() %>% 
+  mutate(unemployment_rate = SE_A17005_003 / SE_A17005_001,        
+         over_65 = SE_A01001B_010  / SE_A01001B_001,     
+         poverty_rate = SE_A13002_002 / SE_A13002_001,
+         year = 2014) %>% 
+  select(fips = Geo_FIPS, Geo_QName, year,
+         total_pop = SE_A00001_001, 
+         pop_density = SE_A00002_002,          
+         over_65,        
+         poverty_rate, 
+         unemployment_rate,
+         median_income = SE_A14006_001,
+         commute = SE_A09003_001) %>% 
+  bind_rows(acs)
+
+acs <- read_csv(here("data", "county-data","acs_2015.csv"))  %>% 
+  rowwise() %>% 
+  mutate(unemployment_rate = SE_A17005_003 / SE_A17005_001,        
+         over_65 = SE_A01001B_010  / SE_A01001B_001,  
+         poverty_rate = SE_A13002_002 / SE_A13002_001,
+         year = 2015) %>% 
+  select(fips = Geo_FIPS, Geo_QName, year,
+         total_pop = SE_A00001_001, 
+         pop_density = SE_A00002_002,          
+         over_65,          
+         poverty_rate, 
+         unemployment_rate,
+         median_income = SE_A14006_001,
+         commute = SE_A09003_001) %>% 
+  bind_rows(acs)
+
+acs <- read_csv(here("data", "county-data","acs_2016.csv"))  %>% 
+  rowwise() %>% 
+  mutate(unemployment_rate = SE_A17005_003 / SE_A17005_001,         
+         over_65 = SE_A01001B_010  / SE_A01001B_001,     
+         poverty_rate = SE_A13002_002 / SE_A13002_001,
+         year = 2016) %>% 
+  select(fips = Geo_FIPS, Geo_QName, year,
+         total_pop = SE_A00001_001, 
+         pop_density = SE_A00002_002,         
+         over_65,         
+         poverty_rate, 
+         unemployment_rate,
+         median_income = SE_A14006_001,
+         commute = SE_A09003_001) %>% 
+  bind_rows(acs)
+
+acs <- read_csv(here("data", "county-data","acs_2017.csv"))  %>% 
+  rowwise() %>% 
+  mutate(unemployment_rate = SE_A17005_003 / SE_A17005_001,      
+         over_65 = SE_A01001B_010  / SE_A01001B_001,     
+         poverty_rate = SE_A13002_002 / SE_A13002_001,
+         year = 2017) %>% 
+  select(fips = Geo_FIPS, Geo_QName, year,
+         total_pop = SE_A00001_001, 
+         pop_density = SE_A00002_002,         
+         over_65,          
+         poverty_rate, 
+         unemployment_rate,
+         median_income = SE_A14006_001,
+         commute = SE_A09003_001) %>% 
+  bind_rows(acs)
+
+acs <- read_csv(here("data", "county-data","acs_2018.csv"))  %>% 
+  rowwise() %>% 
+  mutate(unemployment_rate = SE_A17005_003 / SE_A17005_001,    
+         over_65 = SE_A01001B_010  / SE_A01001B_001,    
+         poverty_rate = SE_A13002_002 / SE_A13002_001,
+         year = 2018) %>% 
+  select(fips = Geo_FIPS, Geo_QName, year,
+         total_pop = SE_A00001_001, 
+         pop_density = SE_A00002_002,          
+         over_65,          
+         poverty_rate, 
+         unemployment_rate,
+         median_income = SE_A14006_001,
+         commute = SE_A09003_001) %>% 
+  bind_rows(acs)
+
+acs <- read_csv(here("data", "county-data","acs_2019.csv"))  %>% 
+  rowwise() %>% 
+  mutate(unemployment_rate = SE_A17005_003 / SE_A17005_001,
+         over_65 = SE_A01001B_010  / SE_A01001B_001,
+         poverty_rate = SE_A13002_002 / SE_A13002_001,
+         year = 2019) %>% 
+  select(fips = Geo_FIPS, Geo_QName, year,
+         total_pop = SE_A00001_001, 
+         pop_density = SE_A00002_002, 
+         unemployment_rate,
+         over_65, 
+         poverty_rate, 
+         median_income = SE_A14006_001,
+         commute = SE_A09003_001)  %>% 
+  bind_rows(acs)
+
+acs <- read_csv(here("data", "county-data","acs_2019.csv"))  %>% 
+  rowwise() %>% 
+  mutate(unemployment_rate = SE_A17005_003 / SE_A17005_001,
+         over_65 = SE_A01001B_010  / SE_A01001B_001,
+         poverty_rate = SE_A13002_002 / SE_A13002_001,
+         year = 2020) %>% 
+  select(fips = Geo_FIPS, Geo_QName, year,
+         total_pop = SE_A00001_001, 
+         pop_density = SE_A00002_002, 
+         unemployment_rate,
+         over_65, 
+         poverty_rate, 
+         median_income = SE_A14006_001,
+         commute = SE_A09003_001)  %>% 
+  bind_rows(acs)
+
+acs <- read_csv(here("data", "county-data","acs_2019.csv"))  %>% 
+  rowwise() %>% 
+  mutate(unemployment_rate = SE_A17005_003 / SE_A17005_001,
+         over_65 = SE_A01001B_010  / SE_A01001B_001,
+         poverty_rate = SE_A13002_002 / SE_A13002_001,
+         year = 2021) %>% 
+  select(fips = Geo_FIPS, Geo_QName, year,
+         total_pop = SE_A00001_001, 
+         pop_density = SE_A00002_002, 
+         unemployment_rate,
+         over_65, 
+         poverty_rate, 
+         median_income = SE_A14006_001,
+         commute = SE_A09003_001)  %>% 
+  bind_rows(acs)
+```
+
+```{r}
+internet <- read_excel(here("data", "county-data","broadband_long2000-2018rev.xlsx")) %>% 
+  mutate( fips =  str_pad(cfips, 5, pad = "0")) %>% 
+  filter(year >= 2010) %>% 
+  select(fips, year, broadband)
+
+internet <- internet %>% 
+  bind_rows(mutate(filter(internet, year == 2018), year = 2029)) %>% 
+  bind_rows(mutate(filter(internet, year == 2018), year = 2020)) %>% 
+  bind_rows(mutate(filter(internet, year == 2018), year = 2021)) 
+
+county <- acs %>% 
+  left_join(internet, by = c('fips', 'year'))
+```
 
 # attitudinal
 
@@ -208,6 +531,11 @@ vacc_hes %>%
   facet_wrap(~ name)
 
 
+vacc_hes <- vacc_hes %>% 
+  mutate(year = 2021) %>% 
+  left_join(county, by = c('fips', 'year')) %>% 
+  select(-year)
+
 write_rds(vacc_hes, here('data', 'cleaned_data', 'vacc_hes.rds'))
 ```
 
@@ -243,6 +571,12 @@ mask %>%
   geom_point(alpha = 0.2) +
   geom_smooth(method = "lm") +
   facet_wrap(~ name)
+
+mask <- mask %>% 
+  mutate(year = 2020) %>% 
+  left_join(county, by = c('fips', 'year')) %>% 
+  select(-year)
+
 
 write_rds(mask, here('data', 'cleaned_data', 'mask.rds'))
 
@@ -313,6 +647,13 @@ covid <- covid %>%
          taste_loss  = na.approx(taste_loss, na.rm = FALSE),
          smell_loss  = na.approx(smell_loss, na.rm = FALSE))
 
+
+covid <- covid %>% 
+  mutate(year = year(date)) %>% 
+  left_join(county, by = c('fips', 'year')) %>% 
+  select(-year)
+
+
 write_rds(covid, here('data', 'cleaned_data', 'covid.rds'))
 
 ```
@@ -323,51 +664,6 @@ write_rds(covid, here('data', 'cleaned_data', 'covid.rds'))
 dates - 2019 cross sectional inclusive
 
 ```{r suicide}
-# suicide_measures_both <- read_delim(here('data','suicide',
-#                                     'Multiple Cause of Death, 1999-2020.txt')) %>% 
-#   janitor::clean_names() %>% 
-#   filter(is.na(notes)) %>% 
-#   select(fips = county_code, county, year = year_code, deaths_both = deaths, population)
-# 
-# suicide_measures_mcd <- read_delim(here('data','suicide',
-#                                     'Multiple Cause of Death, 1999-2020 only multiple cause.txt')) %>% 
-#   janitor::clean_names() %>% 
-#   filter(is.na(notes)) %>% 
-#   select(fips = county_code, county, year = year_code, deaths_mcd = deaths)
-# 
-# breaks <-  c(10,20,40,60,100,200,400,700,1300)
-# suicide_measures <- suicide_measures_both %>% 
-#   left_join(suicide_measures_mcd, by = c('fips', 'county', 'year')) %>% 
-#   mutate(deaths_mcd = na_if(deaths_mcd,'Missing'),
-#          deaths_both = na_if(deaths_both,'Missing'),
-#          deaths_mcd_supp = ifelse(deaths_mcd == 'Suppressed', '(0:9]', NA), 
-#          deaths_both_supp = ifelse(deaths_both == 'Suppressed', '(0:9]', NA), 
-#          deaths_mcd = na_if(deaths_mcd,'Suppressed'),
-#          deaths_both = na_if(deaths_both,'Suppressed'),
-#          deaths_mcd_cut = as.character(cut(as.numeric(deaths_mcd), breaks = breaks)),
-#          deaths_both_cut = as.character(cut(as.numeric(deaths_both), breaks = breaks)),
-#          deaths_mcd_cut = ifelse(!is.na(deaths_mcd_supp),
-#                                  deaths_mcd_supp,
-#                                  deaths_mcd_cut), 
-#          deaths_both_cut = ifelse(!is.na(deaths_both_supp),
-#                                   deaths_both_supp,
-#                                   deaths_both_cut)) %>% 
-#         select(fips, county, year, deaths_both_cut) %>% 
-#   mutate(deaths = factor(deaths_both_cut, ordered = T),
-#          deaths = fct_relevel(deaths, c("(0:9]",
-#                                         "(10,20]",
-#                                         "(20,40]", 
-#                                         "(40,60]",
-#                                         "(60,100]",    
-#                                         "(100,200]",
-#                                         "(200,400]",
-#                                         "(400,700]",   
-#                                         "(700,1.3e+03]")))
-# suicide_measures %>% 
-#   count(year, deaths) %>%
-#   ggplot(aes(x = deaths, y = n)) +
-#   geom_bar(stat = 'identity') +
-#   facet_wrap(~year)        
 
 suicide_measures <- read_delim(here('data','suicide',
                                     'Multiple Cause of Death, 1999-2020 only multiple cause.txt'),
@@ -416,8 +712,6 @@ suicide <- suicide %>%
          depression       = na.approx(depression, na.rm = FALSE),
          suicide_hotline  = na.approx(suicide_hotline, na.rm = FALSE))
 
-write_rds(suicide, here('data', 'cleaned_data', 'suicide.rds'))
-
 suicide %>% 
   filter(fips %in% c("08003", '55057', '51059', '39085', 
            # '36119',
@@ -431,6 +725,10 @@ suicide %>%
   theme_minimal()
 
 
+suicide <- suicide %>% 
+  left_join(county, by = c('fips', 'year')) 
+
+write_rds(suicide, here('data', 'cleaned_data', 'suicide.rds'))
 
 ```
 
@@ -486,6 +784,21 @@ pres_2020 %>% ggplot(aes(x = trump_p, y = `Donald Trump`)) + geom_jitter() + geo
 rm(list = c("pres_2016_results", "pres_2016_gtrend",
             "pres_2020_results", "pres_2020_gtrend"))
 
+
+
+pres_2016 <- pres_2016 %>% 
+  mutate(year = 2016) %>% 
+  left_join(county, by = c('fips', 'year')) %>% 
+  select(-year)
+
 write_rds(pres_2016, here('data', 'cleaned_data', 'pres_2016.rds'))
+
+
+
+pres_2020 <- pres_2020 %>% 
+  mutate(year = 2020) %>% 
+  left_join(county, by = c('fips', 'year')) %>% 
+  select(-year)
+
 write_rds(pres_2020, here('data', 'cleaned_data', 'pres_2020.rds'))
 
