@@ -7,25 +7,24 @@ editor_options:
   markdown: 
     wrap: 72
 output:
-  bookdown::pdf_document2:
+  bookdown::pdf_document2: 
     latex_engine: xelatex
     number_sections: true
-  bookdown::word_document2: 
-    toc: true
-    reference_docx: StylesTemplate.docx
+  # bookdown::word_document2: 
+  #   toc: true
+  #   reference_docx: StylesTemplate.docx
 header-includes:
    - \usepackage{siunitx}
    - \usepackage{setspace}
    - \usepackage{dcolumn}
-   - \usepackage{caption}
    - \usepackage{longtable}
+   - \usepackage{caption}
    - \usepackage{booktabs}
-   - \doublespacing
    - \usepackage{placeins}
+   - \doublespacing
 csl: american-sociological-association.csl
 bibliography: "thesis.bib"
 indent: true
-always_allow_html: true
 ---
 
 ```{r setup, include=FALSE}
@@ -37,25 +36,14 @@ knitr::opts_chunk$set(echo = FALSE,
                       fig.asp = 0.8,
                       out.width = "80%",
                       fig.align="center"
-                      # dev.args = list(png = list(type = "cairo"))
                       )
-
-
 
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(tidyverse, glue, extrafont, here, jtools, psych,
-               modelsummary, showtext, thematic, kableExtra, scales, nlme)
+               modelsummary, showtext, thematic, kableExtra, scales, nlme,
+               flextable)
 
 my_palette  <- c(MetBrewer::met.brewer(name = 'Cross', type = 'discrete'), '#555F61')
-
-stars <- function(p.value){
-  unclass(symnum(p.value, 
-                 corr = FALSE, 
-                 na = FALSE, 
-                 cutpoints = c(0, 0.001, 0.01, 0.05, 1), 
-                 symbols = c("***", "**", "*", " ")))
-}
-
 
 ```
 ```{r data}
@@ -65,6 +53,9 @@ covid <- read_rds(here('data', 'cleaned_data', 'covid.rds'))
 suicide <- read_rds(here('data', 'cleaned_data', 'suicide.rds'))
 pres_2016 <- read_rds(here('data', 'cleaned_data', 'pres_2016.rds'))
 pres_2020 <- read_rds(here('data', 'cleaned_data', 'pres_2020.rds'))
+covid_corrs <- read_rds(here('data', 'from_hpc', 'covid_corrs.rds'))
+suicide_corrs <- read_rds(here('data', 'from_hpc', 'suicide_corrs.rds'))
+
 
 ```
 
@@ -197,7 +188,7 @@ America [@montoyaUsingGoogleData2020].
 Research Question - How can we operationalize Google Search Trends as a
 valid indicator for uses in social science research?
 
-<https://journals.sagepub.com/doi/10.1177/0894439316631043> § What
+<https://journals.sagepub.com/doi/10.1177/0894439316631043> What
 constructs might google trends capture and not capture well? Capture
 attention but not attitudes
 
@@ -214,36 +205,39 @@ sources to address the three areas of inquiry for this paper.  Table
 project and which trends are matched to each source.
 
 ```{r data-sources-table}
-#| results='asis',
-#| tab.cap = 'airquality dataset caption here'
+#| results='asis'
 
 data_sources <- tibble::tribble(
-~Validated.Data.Source, ~Type, ~Dates, ~Google.Trends.Used,
-"General Social Survey", "Cross-Sectional", "2010 - 2020", NA,
+~type, ~Validated.Data.Source, ~Type, ~Dates, ~Google.Trends.Used,
+"Behaviors and Attitudes","General Social Survey", "Cross-Sectional", "2010 - 2020", NA,
  
-"Vaccine Hesitancy for COVID-19", "Cross-Sectional", "March 3 – 15, 2021", "covid conspiracy', 'COVID-19 vaccine', 'Coronavirus', 'Covid-19'",
+"Behaviors and Attitudes","Vaccine Hesitancy for COVID-19", "Cross-Sectional", "March 3 – 15, 2021", "covid conspiracy', 'COVID-19 vaccine', 'Coronavirus', 'Covid-19'",
  
-"Mask-Wearing Survey Data", "Cross-Sectional", "July 2 - 14, 2020", "'Face Mask', 'Mask', 'Cloth Face Mask'",
+"Behaviors and Attitudes","Mask-Wearing Survey Data", "Cross-Sectional", "July 2 - 14, 2020", "'Face Mask', 'Mask', 'Cloth Face Mask'",
  
- "Covid Rates", "Longitudinal", "Every Monday, 2020 - 2021", "'Covid-19', 'Coronavirus', 'Taste Loss', 'Smell Loss'",
+"Health","Covid Rates", "Longitudinal", "Every Monday, 2020 - 2021", "'Covid-19', 'Coronavirus', 'Taste Loss', 'Smell Loss'",
  
-"County Suicide Rates", "Longitudinal", "Yearly 2010-2020", "'Suicide', 'Depression',' Suicide Hotline'",
+"Health","County Suicide Rates", "Longitudinal", "Yearly 2010-2020", "'Suicide', 'Depression',' Suicide Hotline'",
 
-"American National Election Survey", "Cross-Sectional", "2020", NA,
+'Political',"American National Election Survey", "Cross-Sectional", "2020", NA,
  
-"Presidential Election Results", "Cross Sectional", "2016 & 2020", "'Hilary Clinton', 'Donald Trump', 'Joe Biden'"
- )
+'Political',"Presidential Election Results", "Cross Sectional", "2016 & 2020", "'Hilary Clinton', 'Donald Trump', 'Joe Biden'"
+ ) %>% as_grouped_data(groups = c("type"), columns = NULL)
+
 
 data_sources %>% 
-  kbl() %>%
-  # group rows
-  pack_rows("Behaviors and Attitudes", 1,3, background = '#bad7db', bold = T) %>% 
-  pack_rows("Health", 4,5, background = '#bad7db', bold = T) %>% 
-  pack_rows('Political', 6,7, background = '#bad7db', bold = T) %>% 
-  # header style
-  row_spec(0, background = my_palette[8], color = 'white', bold = T) %>% 
-  #overall styling
-  kable_styling(latex_options = c( "hold_position"), full_width = T)
+  as_flextable(hide_grouplabel = TRUE) %>% 
+  set_caption(caption = "New York Air Quality Measurements")  %>% 
+  # theming
+  theme_box() %>% 
+  bg(bg = my_palette[8], part = "header") %>% 
+  color(color = "white", part = "header") %>%
+  set_table_properties(layout = "autofit", width = 1) %>% 
+  # grouped row style
+  fontsize(size = 8) %>% 
+  bold(i = ~ !is.na(type), bold = TRUE) %>% 
+  italic(i = ~ !is.na(type), italic = TRUE) %>% 
+  bg(i = ~ !is.na(type), bg = "#bad7db", part = "body")
 
 ```
 
@@ -283,23 +277,27 @@ One measure of attitudinal indicators is the Vaccine Hesitancy for COVID-19
 (HPS) and the 2019 American Community Survey (ACS) 1-year Public Use Microdata
 Sample (PUMS) to measure U.S. residents’ intentions to receive the COVID-19
 vaccine if available during May 26, 2021 – June 7, 2021. This dataset consists
-of `r nrow(vacc_hes)` observations, one for each U.S. County.
-
-<!-- TODO: VARIABLE SCALE -->
+of `r nrow(vacc_hes)` observations, one for each U.S. County. The variable
+measures the precent of adults in the county who describe themselves as
+“unsure”, “probably not”, or “definitely not” going to get a COVID-19 vaccine
+once one is available to them. The variable ranges from 
+`r percent_format(0.01)(min(vacc_hes$vacc_hesitant))` to 
+`r percent_format(0.01)(max(vacc_hes$vacc_hesitant))`. 
 
 Another attitudinal indicator I use is the Mask-Wearing Survey Data conducted by
 Dynata for the New York Times from July 2 through 14, 2020 [@mask_data]. 250,000
 survey respondents were asked, "How often do you wear a mask in public when you
 expect to be within six feet of another person?". The NYT weighted each response
 to create a county level measure of what percent of the county never, rarely,
-sometimes, frequetly, and always wore a mask when in public. This dataset
-consists of `r nrow(mask)` observations, one for each U.S. County.
-
-<!-- TODO: VARIABLE SCALE -->
+sometimes, frequently, and always wore a mask when in public. This dataset
+consists of `r nrow(mask)` observations, one for each U.S. County. This measure
+represents the percent of adults in the county who never or rarely wear a mask
+(range = `r percent_format(0.01)(min(mask$mask_rare))` to 
+`r percent_format(0.01)(max(mask$mask_rare))`)
 
 ### health
 
-I first use U.S. Covid-19 rates to validate health and disease related topics. I
+I also use U.S. Covid-19 rates to validate health and disease related topics. I
 retrieve U.S. county-level Covid-19 rates from by @covid_data, who compile this
 data based on reports from state and local health agencies. It is widely
 acknowledged that there are biases in this data due to inconsistencies and
@@ -312,17 +310,15 @@ There are `r nrow(covid)` cases across `r nrow(count(covid, fips))`
 counties and `r nrow(count(covid, date))` dates. Missing data were interpolated 
 using `zoo::na.approx()` [@zoo].
 
-<!-- TODO: VARIABLE SCALE -->
-
 I also use county-level suicide rates from the US Centers for Disease Control
 and Prevention [-@suic_data]. Data is grouped by year from 2010-2020. Raw death
-rates are scaled by population size for each year. There are `r nrow(suicide)` 
-total cases, resulting from `r nrow(count(suicide, year))` observations of 
-`r nrow(count(suicide, fips))` counties. Missing data were interpolated 
-using `zoo::na.approx()` [@zoo].
-
-<!-- TODO: VARIABLE SCALE -->
-
+rates are scaled by population size for each year and can be interpreted as the
+death rate by suicide for every 1000 people. There are `r nrow(suicide)` total
+cases, resulting from `r nrow(count(suicide, year))` observations of `r
+nrow(count(suicide, fips))` counties. Missing data were interpolated using
+`zoo::na.approx()` [@zoo]. Measures range from 
+`r round(min(suicide$death_rate, na.rm=T),3)` to 
+`r round(max(suicide$death_rate, na.rm=T),3)`.
 
 ### political
 Finally, I test Google Trends as an operationalization of political
@@ -330,10 +326,10 @@ attitudes by first looking at actual voting outcomes in historical US
 Presidential Election results. This data comes from @pres_data, who scraped the
 results from Townhall.com, Fox News, Politico, and the New York Times. Data on 
 presidential outcomes were avaiable for `r nrow(pres_2016)` counties in 2016 and
-`r nrow(pres_2020)` counties in 2020.
-
-<!-- TODO: VARIABLE SCALE -->
-
+`r nrow(pres_2020)` counties in 2020. Each variable measures the percent of votes
+for the candidate, with the lowest percent at 
+`r percent_format(0.01)(min(pres_2020$biden_p, na.rm=T))`
+and the highest at `r percent_format(0.01)(max(pres_2020$biden_p, na.rm=T))`. 
 
 In addition, I use data on political opinions from the the American National
 Election Survey 2020 Time-Series Study [@anes_data]. This data is paired with
@@ -343,6 +339,7 @@ survey respondents. The study interviewed respondents in a pre-election survey
 that was conducted between August 18, 2020 and the day of the US Presidential
 election day, November 3, 2020.
 
+<!-- TODO: WHICH VARIABLES -->
 <!-- TODO: VARIABLE SCALE -->
 
 
@@ -351,7 +348,7 @@ election day, November 3, 2020.
 In addition to specific outcomes of interest, I also gathered various county
 controls to investigate possible variable confounding. The first Seven of these
 variables come from the 2010-2019 5-year American Community Surveys [@acs2019;
-@acs2018; @acs2017; @acs2016; @acs2015; ; @acs2014; @acs2013; @acs2012;
+@acs2018; @acs2017; @acs2016; @acs2015; @acs2014; @acs2013; @acs2012;
 @acs2011; @acs2010]. These data include total population, population density,
 unemployment rate for those 16 and over, median county income, average commute
 time, percent of households living under the poverty line, and percent above 65
@@ -372,9 +369,12 @@ internet for information search.
 
 
 ## Analysis
-For cross-sectional numeric data, I use the Pearson correlation formula (formula
-\@ref(eq:pearsoncorr)) to calculate the strength of the relationship between
-each Google Trend and the respective datasource. 
+Google Search Trends data and additional demographic data are merged with each
+individual indicator based on County FIPS Codes and date. After creating these
+different datasets, I use the Pearson correlation formula (formula
+\@ref(eq:pearsoncorr)) for cross-sectional numeric data to calculate the
+strength of the relationship between each Google Trend and the respective
+data source.
 
 \begin{equation}
  r =
@@ -385,38 +385,120 @@ each Google Trend and the respective datasource.
 To address longitudinal correlations, I employ Repeated Measures Correlation
 using the `rmcorr` package in R [@bland1995; @bakdash2017]. Repeated Measures
 Correlation is useful for determining the within-county association for paired
-measures across time and counties.
+measures across time and counties. Results of these correlations can be seen in 
+table \@ref(tab:corr-results).
 
 As an additional test of the relationships, I employ multiple linear regression
-to identify the strength of relationships across locales: I include city-data
-like county population size, broadband rates, and median income to attempt to
-disentangle possible confounders of the relationship between Google search
-Trends and verified indicators. Identifying these possible confounded
-relationships will help to explain why some articles find relationships between
-the trends and outcomes while others did not. For linear regression models, I
-normalize independent variables, i.e.variables have been centered and scaled to
-have a mean of 0 and standard deviation 1.
+(for cross-sectional datasets) and random intercept hierarchical linear models
+[@pinheiro_etal21] (for longitudinal datasets) to identify the strength of
+relationships across locales: I include city-data like county population size,
+broadband rates, and median income to attempt to disentangle possible
+confounders of the relationship between Google search Trends and verified
+indicators. Identifying these possible confounded relationships will help to
+explain why some articles find relationships between the trends and outcomes
+while others did not. For linear regression models, I normalize independent
+variables, i.e.variables have been centered and scaled to have a mean of 0 and
+standard deviation 1.
 
 # Results
 
 ## Cultural
+```{r corr-results}
+#|  results='asis'
 
-```{r vacc_hes_analysis1}
-tribble(
-  ~'measure',~'covid_conspiracy', ~'covid_19_vaccine', ~'coronavirus', ~'covid_19', 
-  "vacc_hes, Pearson's R Correlation",
-  cor(vacc_hes$vacc_hesitant, vacc_hes$covid_conspiracy, use = "complete.obs"),
-  cor(vacc_hes$vacc_hesitant, vacc_hes$covid_19_vaccine, use = "complete.obs"),
-  cor(vacc_hes$vacc_hesitant, vacc_hes$coronavirus, use = "complete.obs"),
-  cor(vacc_hes$vacc_hesitant, vacc_hes$covid_19, use = "complete.obs")
-)  %>% 
-  kbl(digits=4) %>%
-  #overall styling
-  kable_styling(latex_options = c( "hold_position"), full_width = T)
+options(knitr.kable.NA = '')
+
+table2 <- tribble(
+  ~'grp', ~'variable', ~'measure',~'trend1', ~'trend2', ~'trend3', ~'trend4', 
+  "Vaccine Hesitancy", NA,  NA, 'covid_conspiracy', 'covid_19_vaccine', 'coronavirus', 'covid_19', 
+  "Vaccine Hesitancy", "Vaccine Hesitancy", "Pearson's R Correlation",
+  as.character(round(cor(vacc_hes$vacc_hesitant, vacc_hes$covid_conspiracy, use = "complete.obs"),4)),
+  as.character(round(cor(vacc_hes$vacc_hesitant, vacc_hes$covid_19_vaccine, use = "complete.obs"),4)),
+  as.character(round(cor(vacc_hes$vacc_hesitant, vacc_hes$coronavirus, use = "complete.obs"),4)),
+  as.character(round(cor(vacc_hes$vacc_hesitant, vacc_hes$covid_19, use = "complete.obs"),4)),
+  
+  "Mask Attitudes",NA,  NA, 'face_mask', 'mask', 'cloth_face_mask',  NA,
+  "Mask Attitudes","Mask Rare", "Pearson's R Correlation",
+  as.character(round(cor(mask$mask_rare, mask$face_mask, use = "complete.obs"),4)),
+  as.character(round(cor(mask$mask_rare, mask$mask, use = "complete.obs"),4)),
+  as.character(round(cor(mask$mask_rare, mask$cloth_face_mask, use = "complete.obs"), 4)), NA,
+  
+  "Covid Rates",NA,  NA, 'covid_19',  'smell_loss', 'taste_loss', NA, 
+  "Covid Rates","Covid Rate", "Pearson's R Correlation", 
+  as.character(round(cor(covid$covid_rate, covid$covid_19, use = "complete.obs"),4)),
+  as.character(round(cor(covid$covid_rate, covid$smell_loss, use = "complete.obs"),4)),
+  as.character(round(cor(covid$covid_rate, covid$taste_loss, use = "complete.obs"),4)),
+  NA,
+  "Covid Rates","Covid Rate", "rmcorr", 
+  as.character(covid_corrs[[2,2]]), 
+  as.character(covid_corrs[[2,3]]), 
+  as.character(covid_corrs[[2,4]]), NA,
+  
+  "Suicide Rates",NA,  NA, 'suicide', 'depression', 'suicide_hotline', NA, 
+  "Suicide Rates","Suicide Rate", "Pearson's R Correlation",
+  as.character(round(cor(suicide$death_rate, suicide$suicide, use = "complete.obs"),4)),
+  as.character(round(cor(suicide$death_rate, suicide$depression, use = "complete.obs"),4)),
+  as.character(round(cor(suicide$death_rate, suicide$suicide_hotline, use = "complete.obs"),4)),
+  NA,
+  "Suicide Rates","Suicide Rate", "rmcorr", 
+  as.character(suicide_corrs[[2,2]]), 
+  as.character(suicide_corrs[[2,3]]), 
+  as.character(suicide_corrs[[2,4]]), NA,
+  
+  "2016 Presidential Votes",NA,  NA, 'Hilary Clinton',  'Donald Trump', NA, NA,
+  "2016 Presidential Votes","2016 Votes for Clinton", "Pearson's R Correlation",
+  as.character(round(cor(pres_2016$clinton_p, pres_2016$`Hilary Clinton`, use = "complete.obs"),4)),
+  as.character(round(cor(pres_2016$clinton_p, pres_2016$`Donald Trump`, use = "complete.obs"),4)), NA, NA,
+  "2016 Presidential Votes","2016 Votes for Trump", "Pearson's R Correlation",
+  as.character(round(cor(pres_2016$trump_p, pres_2016$`Hilary Clinton`, use = "complete.obs"),4)),
+  as.character(round(cor(pres_2016$trump_p, pres_2016$`Donald Trump`, use = "complete.obs"),4)), NA, NA,
+  
+  "2016 Presidential Votes",NA,  NA, 'Joe Biden',  'Donald Trump', NA, NA,
+  "2016 Presidential Votes","2020 Votes for Biden", "Pearson's R Correlation",
+  as.character(round(cor(pres_2020$biden_p, pres_2020$`Joe Biden`, use = "complete.obs"),4)),
+  as.character(round(cor(pres_2020$biden_p, pres_2020$`Donald Trump`, use = "complete.obs"),4)), NA, NA,
+  "2016 Presidential Votes","2020 Votes for Trump", "Pearson's R Correlation",
+  as.character(round(cor(pres_2020$trump_p, pres_2020$`Joe Biden`, use = "complete.obs"),4)),
+  as.character(round(cor(pres_2020$trump_p, pres_2020$`Donald Trump`, use = "complete.obs"),4)), NA, NA
+)  %>%   
+  select(grp, measure, variable, trend1, trend2, trend3, trend4) %>% 
+  as_grouped_data(groups = c("grp"), columns = NULL)
+
+as_flextable(table2, hide_grouplabel = TRUE) %>% 
+  set_caption(caption = "Correlation Results")  %>% 
+  # theming
+  theme_box() %>% 
+  bg(bg = my_palette[8], part = "header") %>% 
+  color(color = "white", part = "header") %>%
+  set_table_properties(layout = "autofit", width = 1) %>% 
+  # grouped row style
+  fontsize(size = 8) %>% 
+  bold(i = ~ !is.na(grp), bold = TRUE) %>% 
+  italic(i = ~ !is.na(grp), italic = TRUE) %>% 
+  bg(i = ~ !is.na(grp), bg = "#bad7db", part = "body")
 ```
 
+The first attitudinal indicators is Vaccine Hesitancy for COVID-19 vaccines
+[@vaches_data]. When comparing the measure of vaccine hesitancy to four
+different Google Search Trends, the correlation does not exceed -0.4021
+('Coronavirus' and vaccine hesitancy). Correlation's under |0.40| are considered
+to be weak according to the common rules of thumb. When running these
+correlations in multiple linear regression (see the results in table 
+\@ref(tab:vacc_hes_analysis)), I see an $r^2$ of 0.221 (Model 1)
+and 0.346 (Model 2), indicating that the Google Trends are able to explain about
+22% of the variation in Vaccine Hesitancy alone. Demographic characteristics
+like the percentage of households with broadband internet and the population
+density are able to explain about 35% of the variation (model 3), outperforming
+the first two models. The Trend coefficients themselves, however, are
+significant and remain significant when controlling for demographics. This
+reinforces the finding from the Pearson Correlation that there is a significant
+but weak relationship between the Google Trends and Vaccine Hesitancy.
 
-```{r vacc_hes_analysis2}
+```{r vacc_hes_analysis}
+#| tab.cap = "Linear Regression Results for Vaccine Hesitancy",
+#|  results='asis'
+
+
 vacc_hes <- vacc_hes %>% 
   select(-c(DMA_google, Geo_QName)) %>% 
   mutate(across(covid_conspiracy:broadband  , ~ scale(.x, center=TRUE, scale=TRUE)[,1]))
@@ -438,7 +520,7 @@ vacc_hes_3  <- lm(vacc_hesitant  ~
                     coronavirus +covid_19,
                    data = vacc_hes)
 
-modelsummary(list(vacc_hes_1, vacc_hes_2, vacc_hes_2b,vacc_hes_3), 
+modelsummary(list(vacc_hes_2, vacc_hes_2b, vacc_hes_1, vacc_hes_3), 
              # title = "Linear Regression Results for Vaccine Hesitancy",
              notes= c('* p < .05. ** p < .01. *** p < .001 (two-tailed test).'),
              estimate = "{estimate}{stars}",
@@ -450,27 +532,26 @@ modelsummary(list(vacc_hes_1, vacc_hes_2, vacc_hes_2b,vacc_hes_3),
 
 ```
 
-pearson correlations
-rsquared
-coefficients
-conclusion
+The second attitudinal measure I test is how Google Trends relates to rare mask
+usage. As with vaccine hesitancy, the Pearson correlations are weak, if not 
+negligible. I introduce these trends in multiple linear regression in table 
+\@ref(tab:mask_analysis). Model 1 demonstrates that these three Google Search
+Trends can explain about 9% of the variance in mask usage across U.S. counties,
+reinforcing the conclusion that the relationship is quite weak. The coefficients
+themselves are somewhat significant in Model 1. However, after including the
+demographic varaibles in Models 2 and 3, we see that the relationship between
+the Google Search Trends and mask usage is strengthed in magnitude and in
+significance, likely indicating a repression effect due to background
+relationships between the trends and demograhic variables. While the trends are
+significant and match the magnitude of the demographic variables, the low $r^2$ 
+for the trends still provides evidence that Google Search Trends data cannot 
+replace survey analysis when trying to measure rare mask usage. 
 
 
-```{r mask_analysis1}
-tribble(
-  ~'measure',~'face_mask', ~'mask', ~'cloth_face_mask',  
-  "Mask Rare, Pearson's R Correlation",
-  cor(mask$mask_rare, mask$face_mask, use = "complete.obs"),
-  cor(mask$mask_rare, mask$mask, use = "complete.obs"),
-  cor(mask$mask_rare, mask$cloth_face_mask, use = "complete.obs")
-)  %>% 
-  kbl(digits=4) %>%
-  #overall styling
-  kable_styling(latex_options = c( "hold_position"), full_width = T)
-```
+```{r mask_analysis}
+#|  results='asis',
+#| tab.cap = "Linear Regression Results for Rare Mask Usage"
 
-
-```{r mask_analysis2}
 mask <- mask %>% 
   select(-c(DMA_google, Geo_QName)) %>% 
   mutate(across(face_mask:broadband  , ~ scale(.x, center=TRUE, scale=TRUE)[,1]))
@@ -488,7 +569,7 @@ mask_3  <- lm(mask_rare  ~
                     face_mask + mask + cloth_face_mask,
                    data = mask)
 
-modelsummary(list(mask_1, mask_2, mask_3), 
+modelsummary(list(mask_2, mask_1, mask_3), 
              # title = "Linear Regression Results for Rare Mask Usage",
              notes= c('* p < .05. ** p < .01. *** p < .001 (two-tailed test).'),
              estimate = "{estimate}{stars}",
@@ -497,28 +578,12 @@ modelsummary(list(mask_1, mask_2, mask_3),
                 font_size = 8)
 
 ```
-pearson correlations
-rsquared
-coefficients
-conclusion
+
 
 ## Medical
 
 
-```{r covid_analysis1}
-covid_corrs <- read_rds(here('data', 'from_hpc', 'covid_corrs.rds'))
-# covid_corrs[1,1] <- "Covid Rate, Pearson's R Correlation"
-# write_rds(covid_corrs, here('data', 'from_hpc', 'covid_corrs.rds'))
-
-
-covid_corrs %>% 
-  kbl(digits=4) %>%
-  #overall styling
-  kable_styling(latex_options = c( "hold_position"), full_width = T)
-```
-
-
-```{r covid_analysis2}
+```{r covid_analysis}
 covid <- covid %>% 
   select(-c(dma_google, Geo_QName, county, state)) %>% 
   mutate(across(covid_19:broadband  , ~ scale(.x, center=TRUE, scale=TRUE)[,1])) %>% 
@@ -545,7 +610,7 @@ covid_3  <- lme(covid_rate  ~
                   date,
                 random = ~ 1 | fips, na.action=na.omit, data = covid)
 
-modelsummary(list(covid_1, covid_2, covid_3), 
+modelsummary(list(covid_2, covid_1, covid_3), 
              # title = "Hierarchical Model for Covid Case Rates",
              notes= c('* p < .05. ** p < .01. *** p < .001 (two-tailed test).',
                       'Random intercept per county'),
@@ -563,22 +628,8 @@ rsquared
 coefficients
 conclusion
 
-```{r suicide_analysis1}
-suicide_corrs <- read_rds(here('data', 'from_hpc', 'suicide_corrs.rds'))
 
-# suicide_corrs[1,1] <- "Death by Suicide Rate, Pearson's R Correlation"
-# suicide_corrs[2,1] <- "Death by Suicide Rate, rmcorr"
-# 
-# write_rds(suicide_corrs, here('data', 'from_hpc', 'suicide_corrs.rds'))
-
-suicide_corrs %>% 
-  kbl(digits=4) %>%
-  #overall styling
-  kable_styling(latex_options = c( "hold_position"), full_width = T)
-```
-
-
-```{r suicide_analysis2}
+```{r suicide_analysis}
 suicide <- suicide %>% 
   select(-c(dma_google, Geo_QName, county, population, deaths)) %>% 
   mutate(across(suicide:broadband  , ~ scale(.x, center=TRUE, scale=TRUE)[,1])) %>% 
@@ -605,7 +656,7 @@ suicide_3  <- lme(death_rate   ~
                   year,
                 random = ~ 1 | fips, na.action=na.omit, data = suicide)
 
-modelsummary(list(suicide_1, suicide_2, suicide_3), 
+modelsummary(list(suicide_2, suicide_1, suicide_3), 
              # title = "Hierarchical Model for Suicide Rates",
              notes= c('* p < .05. ** p < .01. *** p < .001 (two-tailed test).',
                       'Random intercept per county'),
@@ -626,24 +677,8 @@ conclusion
 
 ## Political
 
-```{r pres_2016_analysis1}
-tribble(
-  ~'measure',~'Searches for Hilary Clinton', ~ 'Searches for Donald Trump',
-  "Votes for Clinton, Pearson's R Correlation",
-  cor(pres_2016$clinton_p, pres_2016$`Hilary Clinton`, use = "complete.obs"),
-  cor(pres_2016$clinton_p, pres_2016$`Donald Trump`, use = "complete.obs"),
-  
-  "Votes for Trump, Pearson's R Correlation",
-  cor(pres_2016$trump_p, pres_2016$`Hilary Clinton`, use = "complete.obs"),
-  cor(pres_2016$trump_p, pres_2016$`Donald Trump`, use = "complete.obs"),
-)  %>% 
-  kbl(digits=4) %>%
-  #overall styling
-  kable_styling(latex_options = c( "hold_position"), full_width = T)
-```
 
-
-```{r pres_2016_analysis2}
+```{r pres_2016_analysis}
 pres_2016 <- pres_2016 %>% 
   select(-c(Geo_QName, dma)) %>% 
   mutate(across(c(`Hilary Clinton`,`Donald Trump`:broadband)  , ~ scale(.x, center=TRUE, scale=TRUE)[,1]))
@@ -674,7 +709,7 @@ vacc_hes_3b  <- lm(trump_p    ~
                      `Donald Trump` + `Hilary Clinton`,
                    data = pres_2016)
 
-modelsummary(list(vacc_hes_1a, vacc_hes_2a,vacc_hes_3a 
+modelsummary(list(vacc_hes_2a,vacc_hes_1a, vacc_hes_3a 
                   # ,vacc_hes_1b, vacc_hes_2b,vacc_hes_3b
                   ), 
              # title = "Linear Regression Results for 2016 Presidential Election Results (Hilary Clinton Shown)",
@@ -693,24 +728,7 @@ rsquared
 coefficients
 conclusion
 
-```{r pres_2020_analysis1}
-tribble(
-  ~'measure',~'Searches for Joe Biden', ~ 'Searches for Donald Trump',
-  "Votes for Biden, Pearson's R Correlation",
-  cor(pres_2020$biden_p, pres_2020$`Joe Biden`, use = "complete.obs"),
-  cor(pres_2020$biden_p, pres_2020$`Donald Trump`, use = "complete.obs"),
-  
-  "Votes for Trump, Pearson's R Correlation",
-  cor(pres_2020$trump_p, pres_2020$`Joe Biden`, use = "complete.obs"),
-  cor(pres_2020$trump_p, pres_2020$`Donald Trump`, use = "complete.obs"),
-)  %>% 
-  kbl(digits=4) %>%
-  #overall styling
-  kable_styling(latex_options = c( "hold_position"), full_width = T)
-```
-
-
-```{r pres_2020_analysis2}
+```{r pres_2020_analysis}
 pres_2020 <- pres_2020 %>% 
   select(-c(Geo_QName, dma)) %>% 
   mutate(across(c(`Joe Biden`,`Donald Trump`:broadband)  , ~ scale(.x, center=TRUE, scale=TRUE)[,1]))
@@ -741,7 +759,7 @@ vacc_hes_3b  <- lm(trump_p    ~
                      `Donald Trump` + `Joe Biden`,
                    data = pres_2020)
 
-modelsummary(list(vacc_hes_1a, vacc_hes_2a,vacc_hes_3a 
+modelsummary(list(vacc_hes_2a, vacc_hes_1a, vacc_hes_3a 
                   # ,vacc_hes_1b, vacc_hes_2b,vacc_hes_3b
                   ), 
              # title = "Linear Regression Results for 2020 Presidential Election Results (Joe Biden Shown)",

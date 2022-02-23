@@ -6,3 +6,5 @@
 .httr-oauth
 .DS_Store
 data/
+paper1_cache/
+*.log
