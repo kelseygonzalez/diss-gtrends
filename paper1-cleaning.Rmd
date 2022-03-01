@@ -186,8 +186,7 @@ acs_2010_2016 <- c(Bachelor_higher_25pl = "DP02_0065P",
               perc_poverty = 'DP03_0119P',
               total_population =	"B01003_001",
               perc_65_over = "DP05_0021P",
-              
-              
+
               
               `TotalLabor Force` ='B23025_003',
               Employed ='B23025_004',
@@ -507,24 +506,35 @@ vacc_hes_data <- vroom(here('data', 'vaccine-hesitancy', 'Vaccine_Hesitancy_for_
   mutate(fips = str_pad(fips_code, 5, pad = '0')) %>% 
   select(fips, county_name, vacc_hesitant = estimated_hesitant_or_unsure)
 
-vacc_hes_gtrends <- find_cross_sectional_trends(c('covid conspiracy',
-                                                  'COVID-19 vaccine',
-                                                  'Coronavirus',
-                                                  'Covid-19'
-                                                  # URLdecode('%2Fg%2F11j8_9sv06'),
-                                                  # URLdecode('%2Fg%2F11j2cc_qll')
-                                                  ), 
-                            '2021-05-26', 12) %>%   
-  pivot_wider(names_from = keyword, values_from = hits)  %>% 
-  select(-date) %>% 
-  janitor::clean_names()
+# vacc_hes_gtrends <- find_cross_sectional_trends(c('covid conspiracy',
+#                                                   'COVID-19 vaccine',
+#                                                   'Coronavirus',
+#                                                   'Covid-19'
+#                                                   # URLdecode('%2Fg%2F11j8_9sv06'),
+#                                                   # URLdecode('%2Fg%2F11j2cc_qll')
+#                                                   ), 
+#                             '2021-05-26', 12) %>%   
+#   pivot_wider(names_from = keyword, values_from = hits)  %>% 
+#   select(-date) %>% 
+#   janitor::clean_names()
+
+vacc_hes_gtrends <- read_csv(here('data', 'google_trends', 'covid19vaccinemarch3_152021.csv')) %>% 
+  full_join(read_csv(here('data', 'google_trends', 'vaccinemarch3_152021.csv')), by = "DMA") %>% 
+  full_join(read_csv(here('data', 'google_trends', 'Coronavirusdisease2019march3_152021.csv')), by = "DMA") %>% 
+  full_join(read_csv(here('data', 'google_trends', 'Coronavirusvirusmarch3_152021.csv')), by = "DMA")  %>% 
+  janitor::clean_names()  %>% 
+  mutate(dma = str_to_upper(dma),
+           dma = str_replace_all(dma,"-", " - "),
+           dma = str_replace_all(dma,",", ""),
+           dma = str_replace_all(dma,"\\s(\\w{2})\\b", " \\(\\1\\)"))
+
 
 vacc_hes <- vacc_hes_data %>% 
   left_join(select(dma, FIPS, DMA_google), by = c('fips' = 'FIPS')) %>% 
-  full_join(vacc_hes_gtrends, by = c('DMA_google' = 'location'))  
+  full_join(vacc_hes_gtrends, by = c('DMA_google' = 'dma'))  
 
 vacc_hes %>% 
-  pivot_longer(cols = covid_conspiracy:covid_19) %>% 
+  pivot_longer(cols = covid_19_vaccine:coronavirus_virus) %>% 
   ggplot(aes(y = vacc_hesitant, x = value, color = name)) +
   geom_point(alpha = 0.2) +
   geom_smooth(method = "lm") +
@@ -552,21 +562,35 @@ mask_data <- read_csv('https://raw.githubusercontent.com/nytimes/covid-19-data/m
   mutate(mask_rare = NEVER + RARELY) %>% 
   select(fips = COUNTYFP, mask_rare)
 
-mask_gtrends <- find_cross_sectional_trends(c('Face mask',
-                                              'Mask',
-                                              'Cloth face mask'
-                                              ),
-                                            '2020-07-02', 12)%>%   
-  pivot_wider(names_from = keyword, values_from = hits)  %>% 
-  select(-date) %>% 
-  janitor::clean_names()
+# mask_gtrends <- find_cross_sectional_trends(c('Face mask',
+#                                               'Mask',
+#                                               'Cloth face mask'
+#                                               ),
+#                                             '2020-07-02', 12)%>%   
+#   pivot_wider(names_from = keyword, values_from = hits)  %>% 
+#   select(-date) %>% 
+#   janitor::clean_names()
+
+
+mask_gtrends <- read_csv(here('data', 'google_trends', 'Coronavirusdisease2019july2_142020.csv')) %>% 
+  full_join(read_csv(here('data', 'google_trends', 'Coronavirusvirusjuly2_142020.csv')), by = "DMA") %>% 
+    full_join(read_csv(here('data', 'google_trends', 'Cloth face mask july2_142020.csv')), by = "DMA")  %>% 
+    full_join(read_csv(here('data', 'google_trends', 'mask july2_142020.csv')), by = "DMA")  %>% 
+    full_join(read_csv(here('data', 'google_trends', 'Civil and political rights july2_142020.csv')), by = "DMA")  %>% 
+    full_join(read_csv(here('data', 'google_trends', 'Anti-mask law july2_142020.csv')), by = "DMA")  %>% 
+  janitor::clean_names()  %>% 
+    mutate(dma = str_to_upper(dma),
+           dma = str_replace_all(dma,"-", " - "),
+           dma = str_replace_all(dma,",", ""),
+           dma = str_replace_all(dma,"\\s(\\w{2})\\b", " \\(\\1\\)"))
+
 
 mask <- mask_data %>% 
   left_join(select(dma, FIPS, DMA_google), by = c('fips' = 'FIPS')) %>% 
-  full_join(mask_gtrends, by = c('DMA_google' = 'location'))  
+  full_join(mask_gtrends, by = c('DMA_google' = 'dma'))  
 
 mask %>% 
-  pivot_longer(cols = face_mask:civil_and_political_rights) %>% 
+  pivot_longer(cols = coronavirus_disease:anti_mask_law) %>% 
   ggplot(aes(y = mask_rare, x = value, color = name)) +
   geom_point(alpha = 0.2) +
   geom_smooth(method = "lm") +
@@ -680,14 +704,16 @@ suicide_measures <- read_delim(here('data','suicide',
 append_years <- function(year_begin, year_end){
   years <- seq(year_begin,year_end,1)
   results <- tibble('location' = character(),
-    'suicide' = numeric(), 
-    'depression' = numeric(),
+    # 'suicide' = numeric(), 
+    # 'depression' = numeric(),
     'suicide hotline' = numeric(),
     'year' = numeric()
     )
   for (i in years){
     print(glue("finding trends for {i}..."))
-    results <- find_cross_sectional_trends(c('suicide', 'depression', 'suicide hotline'),
+    results <- find_cross_sectional_trends(c('suicide hotline'
+      # 'suicide', 'depression', 
+      ),
                                 glue("{i}-01-01"), 365) %>%
       pivot_wider(names_from = keyword, values_from = hits)  %>%
       select(-date) %>%
@@ -697,16 +723,113 @@ append_years <- function(year_begin, year_end){
   results
 }  
 
-suicide_gtrends <- append_years(2010, 2020)
+hotline_gtrends <- append_years(2010, 2020)
+hotline_rescale_point <-  read_csv(here('data', 'google_trends', 'suicidehotline_long_LA.csv')) %>% 
+  mutate(dma = 'LOS ANGELES (CA)',
+         year = as.numeric(str_sub(Month, 1, 4)),
+         month = as.numeric(str_sub(Month, 6, 7)))  %>% 
+  group_by(year, dma) %>%
+  summarize(hits_rescale = mean(`suicide hotline`, na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  left_join(hotline_gtrends, by = c('year' = 'year', 'dma' = 'location'))  %>% 
+  mutate(rescale_ratio = hits_rescale / `suicide hotline`)  %>%
+  select(year, rescale_ratio)
 
-suicide <- suicide_measures %>% 
-  left_join(select(dma, FIPS, DMA_google), by = c('fips' = 'FIPS')) %>% 
-  full_join(suicide_gtrends, by = c('DMA_google' = 'location', 'year' = 'year'))  %>% 
+hotline <- hotline_gtrends %>% 
+  group_by(location) %>% 
+  fill( `suicide hotline`) %>%
+  ungroup() %>% 
+  left_join(hotline_rescale_point, by = "year") %>% 
+  mutate(`suicide hotline` = `suicide hotline` * rescale_ratio) %>% 
+  rename(suicide_hotline = `suicide hotline`) %>% 
+  select(-rescale_ratio)
+
+suicide <- mutate(read_csv(here('data', 'google_trends', 'suicide2010.csv')), year = 2010) %>% 
+  bind_rows(mutate(read_csv(here('data', 'google_trends', 'suicide2011.csv')), year = 2011)) %>% 
+  bind_rows(mutate(read_csv(here('data', 'google_trends', 'suicide2012.csv')), year = 2012)) %>% 
+  bind_rows(mutate(read_csv(here('data', 'google_trends', 'suicide2013.csv')), year = 2013)) %>% 
+  bind_rows(mutate(read_csv(here('data', 'google_trends', 'suicide2014.csv')), year = 2014)) %>% 
+  bind_rows(mutate(read_csv(here('data', 'google_trends', 'suicide2015.csv')), year = 2015)) %>% 
+  bind_rows(mutate(read_csv(here('data', 'google_trends', 'suicide2016.csv')), year = 2016)) %>% 
+  bind_rows(mutate(read_csv(here('data', 'google_trends', 'suicide2017.csv')), year = 2017)) %>% 
+  bind_rows(mutate(read_csv(here('data', 'google_trends', 'suicide2018.csv')), year = 2018)) %>% 
+  bind_rows(mutate(read_csv(here('data', 'google_trends', 'suicide2019.csv')), year = 2019)) %>% 
+  bind_rows(mutate(read_csv(here('data', 'google_trends', 'suicide2020.csv')), year = 2020)) %>% 
   janitor::clean_names()
 
+suicide_rescale_point <-  read_csv(here('data', 'google_trends', 'suicide_long_LA.csv')) %>% 
+  mutate(dma = 'Los Angeles CA',
+        year = as.numeric(str_sub(Month, 1, 4)),
+        month = as.numeric(str_sub(Month, 6, 7)))  %>% 
+  group_by(year, dma) %>%
+  summarize(hits_rescale = mean(Suicide, na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  left_join(suicide, by = c('year', 'dma'))  %>% 
+  mutate(rescale_ratio = hits_rescale / suicide)  %>%
+  select(year, rescale_ratio)
+  
 suicide <- suicide %>% 
+    group_by(dma) %>% 
+    fill(suicide) %>%
+    ungroup() %>% 
+    left_join(suicide_rescale_point, by = "year") %>% 
+    mutate(suicide = suicide * rescale_ratio) %>% 
+  select(-rescale_ratio) %>% 
+  mutate(dma = str_to_upper(dma),
+         dma = str_replace_all(dma,"-", " - "),
+         dma = str_replace_all(dma,",", ""),
+         dma = str_replace_all(dma,"\\s(\\w{2})\\b", " \\(\\1\\)"))
+
+
+
+depression <- mutate(read_csv(here('data', 'google_trends', 'depression2010.csv')), year = 2010) %>% 
+  bind_rows(mutate(read_csv(here('data', 'google_trends', 'depression2011.csv')), year = 2011)) %>% 
+  bind_rows(mutate(read_csv(here('data', 'google_trends', 'depression2012.csv')), year = 2012)) %>% 
+  bind_rows(mutate(read_csv(here('data', 'google_trends', 'depression2013.csv')), year = 2013)) %>% 
+  bind_rows(mutate(read_csv(here('data', 'google_trends', 'depression2014.csv')), year = 2014)) %>% 
+  bind_rows(mutate(read_csv(here('data', 'google_trends', 'depression2015.csv')), year = 2015)) %>% 
+  bind_rows(mutate(read_csv(here('data', 'google_trends', 'depression2016.csv')), year = 2016)) %>% 
+  bind_rows(mutate(read_csv(here('data', 'google_trends', 'depression2017.csv')), year = 2017)) %>% 
+  bind_rows(mutate(read_csv(here('data', 'google_trends', 'depression2018.csv')), year = 2018)) %>% 
+  bind_rows(mutate(read_csv(here('data', 'google_trends', 'depression2019.csv')), year = 2019)) %>% 
+  bind_rows(mutate(read_csv(here('data', 'google_trends', 'depression2020.csv')), year = 2020)) %>% 
+  janitor::clean_names()
+
+depression_rescale_point <-  read_csv(here('data', 'google_trends', 'depression_long_LA.csv')) %>% 
+  mutate(dma = 'Los Angeles CA',
+        year = as.numeric(str_sub(Month, 1, 4)),
+        month = as.numeric(str_sub(Month, 6, 7)))  %>% 
+  group_by(year, dma) %>%
+  summarize(hits_rescale = mean(Depression, na.rm = TRUE)) %>% 
+  ungroup() %>% 
+  left_join(depression, by = c('year', 'dma'))  %>% 
+  mutate(rescale_ratio = hits_rescale / depression)  %>%
+  select(year, rescale_ratio)
+  
+depression <- depression %>% 
+    group_by(dma) %>% 
+    fill(depression) %>%
+    ungroup() %>% 
+    left_join(depression_rescale_point, by = "year") %>% 
+    mutate(depression = depression * rescale_ratio) %>% 
+  select(-rescale_ratio)  %>% 
+  mutate(dma = str_to_upper(dma),
+         dma = str_replace_all(dma,"-", " - "),
+         dma = str_replace_all(dma,",", ""),
+         dma = str_replace_all(dma,"\\s(\\w{2})\\b", " \\(\\1\\)"))
+
+
+
+
+
+
+suicide_data <- suicide_measures %>% 
+  left_join(select(dma, FIPS, DMA_google), by = c('fips' = 'FIPS')) %>% 
+  full_join(suicide, by = c('DMA_google' = 'dma', 'year' = 'year')) %>% 
+  full_join(depression, by = c('DMA_google' = 'dma', 'year' = 'year')) %>% 
+  full_join(hotline, by = c('DMA_google' = 'location', 'year' = 'year')) %>% 
   group_by(fips) %>%
-  mutate(deaths           = na.approx(deaths, na.rm = FALSE),
+  mutate(death_rate       = na.approx(death_rate, na.rm = FALSE),
          population       = na.approx(population, na.rm = FALSE),
          suicide          = na.approx(suicide, na.rm = FALSE),
          depression       = na.approx(depression, na.rm = FALSE),
@@ -725,10 +848,10 @@ suicide %>%
   theme_minimal()
 
 
-suicide <- suicide %>% 
+suicide_data <- suicide_data %>% 
   left_join(county, by = c('fips', 'year')) 
 
-write_rds(suicide, here('data', 'cleaned_data', 'suicide.rds'))
+write_rds(suicide_data, here('data', 'cleaned_data', 'suicide.rds'))
 
 ```
 
@@ -751,34 +874,51 @@ pres_2020_results <- read_csv('https://raw.githubusercontent.com/tonmcg/US_Count
     mutate(biden_p = biden / totalvotes,
          trump_p = trump / totalvotes)
 
-pres_2020_gtrend <- find_cross_sectional_trends(c('Joe Biden', 'Donald Trump'), '2020-01-01', 307) %>% 
-  pivot_wider(names_from = keyword, values_from = hits)  %>% 
-  select(-date)
-
-
-pres_2016_gtrend <- find_cross_sectional_trends(c('Hilary Clinton', 'Donald Trump'), '2016-01-01', 307) %>% 
-  pivot_wider(names_from = keyword, values_from = hits)  %>% 
-  select(-date)
-
+# pres_2020_gtrend <- find_cross_sectional_trends(c('Joe Biden', 'Donald Trump'), '2020-01-01', 307) %>% 
+#   pivot_wider(names_from = keyword, values_from = hits)  %>% 
+#   select(-date)
+pres_2020_gtrend <- read_csv(here('data', 'google_trends', 'presidents_2020.csv')) %>% 
+  janitor::clean_names() %>% 
+  mutate(dma = str_to_upper(dma),
+         dma = str_replace_all(dma,"-", " - "),
+         dma = str_replace_all(dma,",", ""),
+         dma = str_replace_all(dma,"\\s(\\w{2})\\b", " \\(\\1\\)"),
+         donald_trump_trend = as.numeric(str_remove(donald_trump, '%')), 
+         joe_biden_trend = as.numeric(str_remove(joe_biden, '%'))) 
+  
+  
+# pres_2016_gtrend <- find_cross_sectional_trends(c('Hilary Clinton', 'Donald Trump'), '2016-01-01', 307) %>%
+#   pivot_wider(names_from = keyword, values_from = hits)  %>% 
+#   select(-date)
+pres_2016_gtrend <- read_csv(here('data', 'google_trends', 'presidents_2016.csv')) %>% 
+  janitor::clean_names() %>% 
+  mutate(dma = str_to_upper(dma),
+         dma = str_replace_all(dma,"-", " - "),
+         dma = str_replace_all(dma,",", ""),
+         dma = str_replace_all(dma,"\\s(\\w{2})\\b", " \\(\\1\\)"),
+         donald_trump_trend = as.numeric(str_remove(donald_trump, '%')), 
+         hillary_clinton_trend = as.numeric(str_remove(hillary_clinton, '%'))) 
+  
+  
 pres_2016 <- pres_2016_results %>% 
   inner_join(select(dma, FIPS, DMA_google), by = c('county_fips' = 'FIPS')) %>%
-  left_join(pres_2016_gtrend, by = c('DMA_google' = 'location')) %>%
+  left_join(pres_2016_gtrend, by = c('DMA_google' = 'dma')) %>%
   select(dma = DMA_google,
          fips = county_fips, 
-         clinton_p, `Hilary Clinton`, trump_p, `Donald Trump`)
+         clinton_p, hillary_clinton_trend, trump_p, donald_trump_trend)
   
-pres_2016 %>% ggplot(aes(x = trump_p, y = `Donald Trump`)) + geom_jitter() + geom_smooth()
-pres_2016 %>% ggplot(aes(x = clinton_p, y = `Hilary Clinton`)) + geom_jitter()
+pres_2016 %>% ggplot(aes(x = trump_p, y = donald_trump_trend)) + geom_jitter() + geom_smooth()
+pres_2016 %>% ggplot(aes(x = clinton_p, y = hillary_clinton_trend)) + geom_jitter()+ geom_smooth()
 
 pres_2020 <- pres_2020_results %>% 
   inner_join(select(dma, FIPS, DMA_google), by = c('county_fips' = 'FIPS')) %>% 
-  left_join(pres_2020_gtrend, by = c('DMA_google' = 'location')) %>% 
+  left_join(pres_2020_gtrend, by = c('DMA_google' = 'dma')) %>% 
   select(dma = DMA_google,
          fips = county_fips, 
-         biden_p, `Joe Biden`, trump_p, `Donald Trump`)
+         biden_p, joe_biden_trend, trump_p, donald_trump_trend)
 
-pres_2020 %>% ggplot(aes(x = biden_p, y = Joe Biden`)) + geom_jitter() + geom_smooth()
-pres_2020 %>% ggplot(aes(x = trump_p, y = `Donald Trump`)) + geom_jitter() + geom_smooth()
+pres_2020 %>% ggplot(aes(x = biden_p, y =joe_biden_trend)) + geom_jitter() + geom_smooth()
+pres_2020 %>% ggplot(aes(x = trump_p, y = donald_trump_trend)) + geom_jitter() + geom_smooth()
 
 
 rm(list = c("pres_2016_results", "pres_2016_gtrend",

@@ -1,5 +1,5 @@
 ---
-title: "Article 1:	Construct Validity and Correspondence of Google Trends"
+title: "Article 1: Digital Trace Data as Indicators of Social Data Validating Google Trends for  use in Scientific Research"
 author: "Kelsey Gonzalez"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 editor_options:
@@ -8,6 +8,7 @@ editor_options:
     wrap: 72
 output:
   bookdown::pdf_document2: 
+    keep_tex: true
     latex_engine: xelatex
     number_sections: true
   # bookdown::word_document2: 
@@ -21,6 +22,7 @@ header-includes:
    - \usepackage{caption}
    - \usepackage{booktabs}
    - \usepackage{placeins}
+   - \usepackage{hhline}
    - \doublespacing
 csl: american-sociological-association.csl
 bibliography: "thesis.bib"
@@ -47,6 +49,9 @@ my_palette  <- c(MetBrewer::met.brewer(name = 'Cross', type = 'discrete'), '#555
 
 ```
 ```{r data}
+#| cache = FALSE
+
+
 vacc_hes <- read_rds(here('data', 'cleaned_data', 'vacc_hes.rds'))
 mask <- read_rds(here('data', 'cleaned_data', 'mask.rds')) %>%  ungroup()
 covid <- read_rds(here('data', 'cleaned_data', 'covid.rds'))
@@ -64,6 +69,9 @@ suicide_corrs <- read_rds(here('data', 'from_hpc', 'suicide_corrs.rds'))
 Possible titles Digital Trace Data as Social Indicators: Indicators of
 Attention Rather Than Support
 
+Digital Trace Data as Indicators of Social Data: Validating Google Trends for
+ use in Scientific Research
+
 **Keywords**:
 
 # Intro
@@ -77,8 +85,8 @@ parameters under which these data sources could be operationalized
 [@bailCulturalEnvironmentMeasuring2014; @lazerParableGoogleFlu2014]. As
 prior research outlined, the "quantity of data does not mean that one
 can ignore foundational issues of measurement and construct validity and
-reliability and dependencies among data" \[@lazerParableGoogleFlu2014,
-p. 1203\]. Building on this prior research outlining these various
+reliability and dependencies among data" [@lazerParableGoogleFlu2014,
+p. 1203]. Building on this prior research outlining these various
 issues with big data [@boydCriticalQuestionsBig2012;
 @lazerIssuesConstructValidity2015], this paper tests the construct
 validity of Google Search Trends as an indicator of three different
@@ -211,17 +219,17 @@ data_sources <- tibble::tribble(
 ~type, ~Validated.Data.Source, ~Type, ~Dates, ~Google.Trends.Used,
 "Behaviors and Attitudes","General Social Survey", "Cross-Sectional", "2010 - 2020", NA,
  
-"Behaviors and Attitudes","Vaccine Hesitancy for COVID-19", "Cross-Sectional", "March 3 – 15, 2021", "covid conspiracy', 'COVID-19 vaccine', 'Coronavirus', 'Covid-19'",
+"Behaviors and Attitudes","Vaccine Hesitancy for COVID-19", "Cross-Sectional", "March 3 – 15, 2021", "Search Topics: 'Covid-19 vaccine', 'Coronavirus (Disease)', 'Coronavirus (Virus)', 'Vaccine'",
  
-"Behaviors and Attitudes","Mask-Wearing Survey Data", "Cross-Sectional", "July 2 - 14, 2020", "'Face Mask', 'Mask', 'Cloth Face Mask'",
+"Behaviors and Attitudes","Mask-Wearing Survey Data", "Cross-Sectional", "July 2 - 14, 2020", "Search Topics: 'Coronavirus (Disease)', 'Coronavirus (Virus)', 'Cloth Face Mask', 'Mask', 'Civil and Political Rights'",
  
 "Health","Covid Rates", "Longitudinal", "Every Monday, 2020 - 2021", "'Covid-19', 'Coronavirus', 'Taste Loss', 'Smell Loss'",
  
-"Health","County Suicide Rates", "Longitudinal", "Yearly 2010-2020", "'Suicide', 'Depression',' Suicide Hotline'",
+"Health","County Suicide Rates", "Longitudinal", "Yearly 2010-2020", "Search Topics: 'Suicide', 'Depression', Search Term:' Suicide Hotline'",
 
 'Political',"American National Election Survey", "Cross-Sectional", "2020", NA,
  
-'Political',"Presidential Election Results", "Cross Sectional", "2016 & 2020", "'Hilary Clinton', 'Donald Trump', 'Joe Biden'"
+'Political',"Presidential Election Results", "Cross Sectional", "2016 & 2020", "Search Topics: 'Hilary Clinton', 'Donald Trump', 'Joe Biden'"
  ) %>% as_grouped_data(groups = c("type"), columns = NULL)
 
 
@@ -249,23 +257,28 @@ Google trends portray the search frequency for specific search terms across
 designated media markets areas (DMAs), a nonoverlapping aggregation of U.S.
 counties to 210 media markets based on similar population clusters [@dma_key].
 Raw data is on a scale from 0 to 100, with 100 being the maximum search
-popularity out of all DMAs. Google Search Trend are now only available
-cross-sectionally (a single time period across a geography) or as time-series (a
-single geo-location across time). To remedy this and build a longitudinal
-dataset of each search topic for the longitudinal datasets, I follow the method
-proposed in @park_etal (p. 5). This method involves building a dataset of
-unscaled cross-sectional values, selecting a DMA to use to establish the
-rescaling ratio (I use 'Los Angeles CA'), and then finding the time-series
-values for the one DMA. To find the rescaling ratio for each week in the
-time-series, you divide the time-series value for each week by the
-cross-sectional value for each week, resulting in a rescaling vector to be used
-for all weeks in the dataset across geographies. To rescale each longitudinal
-value, multiply the respective week's rescaling ratio by the cross-sectional
-value. Rescaled longitudinal data was compared against time-series data for
-multiple test counties and was equivalent. For a more in-depth explanation of
-this procedure, see @park_etal (p. 5). Missing datapoints in longitudinal
-datasets were filled in with interpolated values using `zoo::na.approx()`
-[@zoo].
+popularity out of all DMAs. When available, I use Google search topics to
+measure trends as opposed to search terms. Search topics are a more robust
+measurement than a single search term: topics are aggregations of the rates of
+multiple, highly correlated search terms together into a cohesive topic. For
+example, while 'Beyoncé', 'Beyonce' and 'beyonce knowles' are all separate
+search terms, 'Beyoncé Knowles' encompasses all of these into a single search
+topic. Google Search Trend are only available cross-sectionally (a single time
+period across a geography) or as time-series (a single geo-location across
+time). To remedy this and build a longitudinal dataset of each search topic for
+the longitudinal datasets, I follow the method proposed in @park_etal (p. 5).
+This method involves building a dataset of unscaled cross-sectional values,
+selecting a DMA to use to establish the rescaling ratio (I use 'Los Angeles
+CA'), and then finding the time-series values for the one DMA. To find the
+rescaling ratio for each week in the time-series, you divide the time-series
+value for each week by the cross-sectional value for each week, resulting in a
+rescaling vector to be used for all weeks in the dataset across geographies. To
+rescale each longitudinal value, multiply the respective week's rescaling ratio
+by the cross-sectional value. Rescaled longitudinal data was compared against
+time-series data for multiple test counties and was equivalent. For a more
+in-depth explanation of this procedure, see @park_etal (p. 5). Missing
+datapoints in longitudinal datasets were filled in with interpolated values
+using `zoo::na.approx()` [@zoo].
 
 
 ### attitudinal
@@ -402,66 +415,70 @@ standard deviation 1.
 
 # Results
 
-## Cultural
+## Validating Google Trends as metrics of attitudinal indicators
+
 ```{r corr-results}
 #|  results='asis'
 
 options(knitr.kable.NA = '')
 
 table2 <- tribble(
-  ~'grp', ~'variable', ~'measure',~'trend1', ~'trend2', ~'trend3', ~'trend4', 
-  "Vaccine Hesitancy", NA,  NA, 'covid_conspiracy', 'covid_19_vaccine', 'coronavirus', 'covid_19', 
+  ~'grp', ~'variable', ~'measure',~'trend1', ~'trend2', ~'trend3', ~'trend4', ~'trend5', 
+  "Vaccine Hesitancy", NA,  NA, 'Covid-19 vaccine', 'Coronavirus (Disease)', 'Coronavirus (Virus)', 'Vaccine', NA,
   "Vaccine Hesitancy", "Vaccine Hesitancy", "Pearson's R Correlation",
-  as.character(round(cor(vacc_hes$vacc_hesitant, vacc_hes$covid_conspiracy, use = "complete.obs"),4)),
   as.character(round(cor(vacc_hes$vacc_hesitant, vacc_hes$covid_19_vaccine, use = "complete.obs"),4)),
-  as.character(round(cor(vacc_hes$vacc_hesitant, vacc_hes$coronavirus, use = "complete.obs"),4)),
-  as.character(round(cor(vacc_hes$vacc_hesitant, vacc_hes$covid_19, use = "complete.obs"),4)),
+  as.character(round(cor(vacc_hes$vacc_hesitant, vacc_hes$coronavirus_disease, use = "complete.obs"),4)),
+  as.character(round(cor(vacc_hes$vacc_hesitant, vacc_hes$coronavirus_virus, use = "complete.obs"),4)),
+  as.character(round(cor(vacc_hes$vacc_hesitant, vacc_hes$vaccine, use = "complete.obs"),4)), NA,
   
-  "Mask Attitudes",NA,  NA, 'face_mask', 'mask', 'cloth_face_mask',  NA,
+  "Mask Attitudes",NA,  NA, 'Coronavirus (Disease)', 'Coronavirus (Virus)', 'Cloth Face Mask', 'Mask', 'Civil and Political Rights',
   "Mask Attitudes","Mask Rare", "Pearson's R Correlation",
-  as.character(round(cor(mask$mask_rare, mask$face_mask, use = "complete.obs"),4)),
-  as.character(round(cor(mask$mask_rare, mask$mask, use = "complete.obs"),4)),
-  as.character(round(cor(mask$mask_rare, mask$cloth_face_mask, use = "complete.obs"), 4)), NA,
+  as.character(round(cor(mask$mask_rare, mask$coronavirus_disease, use = "complete.obs"),4)),
+  as.character(round(cor(mask$mask_rare, mask$coronavirus_virus, use = "complete.obs"),4)),
+  as.character(round(cor(mask$mask_rare, mask$cloth_face_mask, use = "complete.obs"), 4)), 
+  as.character(round(cor(mask$mask_rare, mask$mask, use = "complete.obs"), 4)), 
+  as.character(round(cor(mask$mask_rare, mask$civil_and_political_rights, use = "complete.obs"), 4)), 
+
   
-  "Covid Rates",NA,  NA, 'covid_19',  'smell_loss', 'taste_loss', NA, 
+  "Covid Rates",NA,  NA, 'covid_19',  'smell_loss', 'taste_loss', NA, NA, 
   "Covid Rates","Covid Rate", "Pearson's R Correlation", 
   as.character(round(cor(covid$covid_rate, covid$covid_19, use = "complete.obs"),4)),
   as.character(round(cor(covid$covid_rate, covid$smell_loss, use = "complete.obs"),4)),
   as.character(round(cor(covid$covid_rate, covid$taste_loss, use = "complete.obs"),4)),
-  NA,
-  "Covid Rates","Covid Rate", "rmcorr", 
+  NA,NA, 
+  "Covid Rates","Covid Rate", "repeated measures correlation coefficient", 
   as.character(covid_corrs[[2,2]]), 
   as.character(covid_corrs[[2,3]]), 
-  as.character(covid_corrs[[2,4]]), NA,
+  as.character(covid_corrs[[2,4]]), NA,NA, 
   
-  "Suicide Rates",NA,  NA, 'suicide', 'depression', 'suicide_hotline', NA, 
+  "Suicide Rates",NA,  NA, 'suicide', 'depression', 'suicide_hotline', NA,NA,  
   "Suicide Rates","Suicide Rate", "Pearson's R Correlation",
   as.character(round(cor(suicide$death_rate, suicide$suicide, use = "complete.obs"),4)),
   as.character(round(cor(suicide$death_rate, suicide$depression, use = "complete.obs"),4)),
   as.character(round(cor(suicide$death_rate, suicide$suicide_hotline, use = "complete.obs"),4)),
-  NA,
-  "Suicide Rates","Suicide Rate", "rmcorr", 
+  NA,NA, 
+  "Suicide Rates","Suicide Rate", "repeated measures correlation coefficient", 
   as.character(suicide_corrs[[2,2]]), 
   as.character(suicide_corrs[[2,3]]), 
-  as.character(suicide_corrs[[2,4]]), NA,
+  as.character(suicide_corrs[[2,4]]), NA,NA, 
   
-  "2016 Presidential Votes",NA,  NA, 'Hilary Clinton',  'Donald Trump', NA, NA,
+  "2016 Presidential Votes",NA,  NA, 'Hilary Clinton',  'Donald Trump', NA, NA,NA, 
   "2016 Presidential Votes","2016 Votes for Clinton", "Pearson's R Correlation",
-  as.character(round(cor(pres_2016$clinton_p, pres_2016$`Hilary Clinton`, use = "complete.obs"),4)),
-  as.character(round(cor(pres_2016$clinton_p, pres_2016$`Donald Trump`, use = "complete.obs"),4)), NA, NA,
+  as.character(round(cor(pres_2016$clinton_p, pres_2016$hillary_clinton_trend, use = "complete.obs"),4)),
+  as.character(round(cor(pres_2016$clinton_p, pres_2016$donald_trump_trend, use = "complete.obs"),4)), NA, NA,NA, 
   "2016 Presidential Votes","2016 Votes for Trump", "Pearson's R Correlation",
-  as.character(round(cor(pres_2016$trump_p, pres_2016$`Hilary Clinton`, use = "complete.obs"),4)),
-  as.character(round(cor(pres_2016$trump_p, pres_2016$`Donald Trump`, use = "complete.obs"),4)), NA, NA,
+  as.character(round(cor(pres_2016$trump_p, pres_2016$hillary_clinton_trend, use = "complete.obs"),4)),
+  as.character(round(cor(pres_2016$trump_p, pres_2016$donald_trump_trend, use = "complete.obs"),4)), NA, NA,NA, 
   
-  "2016 Presidential Votes",NA,  NA, 'Joe Biden',  'Donald Trump', NA, NA,
-  "2016 Presidential Votes","2020 Votes for Biden", "Pearson's R Correlation",
-  as.character(round(cor(pres_2020$biden_p, pres_2020$`Joe Biden`, use = "complete.obs"),4)),
-  as.character(round(cor(pres_2020$biden_p, pres_2020$`Donald Trump`, use = "complete.obs"),4)), NA, NA,
-  "2016 Presidential Votes","2020 Votes for Trump", "Pearson's R Correlation",
-  as.character(round(cor(pres_2020$trump_p, pres_2020$`Joe Biden`, use = "complete.obs"),4)),
-  as.character(round(cor(pres_2020$trump_p, pres_2020$`Donald Trump`, use = "complete.obs"),4)), NA, NA
+  "2020 Presidential Votes",NA,  NA, 'Joe Biden',  'Donald Trump', NA, NA,NA, 
+  "2020 Presidential Votes","2020 Votes for Biden", "Pearson's R Correlation",
+  as.character(round(cor(pres_2020$biden_p, pres_2020$joe_biden_trend, use = "complete.obs"),4)),
+  as.character(round(cor(pres_2020$biden_p, pres_2020$donald_trump_trend, use = "complete.obs"),4)), NA, NA,NA, 
+  "2020 Presidential Votes","2020 Votes for Trump", "Pearson's R Correlation",
+  as.character(round(cor(pres_2020$trump_p, pres_2020$joe_biden_trend, use = "complete.obs"),4)),
+  as.character(round(cor(pres_2020$trump_p, pres_2020$donald_trump_trend, use = "complete.obs"),4)), NA, NA, NA 
 )  %>%   
-  select(grp, measure, variable, trend1, trend2, trend3, trend4) %>% 
+  select(grp, measure, variable, trend1, trend2, trend3, trend4, trend5) %>% 
   as_grouped_data(groups = c("grp"), columns = NULL)
 
 as_flextable(table2, hide_grouplabel = TRUE) %>% 
@@ -480,19 +497,19 @@ as_flextable(table2, hide_grouplabel = TRUE) %>%
 
 The first attitudinal indicators is Vaccine Hesitancy for COVID-19 vaccines
 [@vaches_data]. When comparing the measure of vaccine hesitancy to four
-different Google Search Trends, the correlation does not exceed -0.4021
-('Coronavirus' and vaccine hesitancy). Correlation's under |0.40| are considered
-to be weak according to the common rules of thumb. When running these
-correlations in multiple linear regression (see the results in table 
-\@ref(tab:vacc_hes_analysis)), I see an $r^2$ of 0.221 (Model 1)
-and 0.346 (Model 2), indicating that the Google Trends are able to explain about
-22% of the variation in Vaccine Hesitancy alone. Demographic characteristics
-like the percentage of households with broadband internet and the population
-density are able to explain about 35% of the variation (model 3), outperforming
-the first two models. The Trend coefficients themselves, however, are
-significant and remain significant when controlling for demographics. This
-reinforces the finding from the Pearson Correlation that there is a significant
-but weak relationship between the Google Trends and Vaccine Hesitancy.
+different Google Search Trends, the correlation does not exceed -0.4657
+('Coronavirus (Disease)' and vaccine hesitancy). Correlation's under |0.40| are
+considered to be weak according to the common rules of thumb. When running these
+correlations in multiple linear regression (see the results in table
+\@ref(tab:vacc_hes_analysis)), I see an $r^2$ of 0.233 (Model 1) and 0.411
+(Model 2), indicating that the Google Trends are able to explain about 23% of
+the variation in Vaccine Hesitancy alone. Demographic characteristics like the
+percentage of households with broadband internet and the population density are
+able to explain about 35% of the variation (model 2), outperforming the first
+models. The Trend coefficients themselves, however, are significant and remain
+significant when controlling for demographics. This reinforces the finding from
+the Pearson Correlation that there is a significant but weak relationship
+between the Google Trends and Vaccine Hesitancy.
 
 ```{r vacc_hes_analysis}
 #| tab.cap = "Linear Regression Results for Vaccine Hesitancy",
@@ -501,26 +518,23 @@ but weak relationship between the Google Trends and Vaccine Hesitancy.
 
 vacc_hes <- vacc_hes %>% 
   select(-c(DMA_google, Geo_QName)) %>% 
-  mutate(across(covid_conspiracy:broadband  , ~ scale(.x, center=TRUE, scale=TRUE)[,1]))
+  mutate(across(covid_19_vaccine:broadband  , ~ scale(.x, center=TRUE, scale=TRUE)[,1]))
 
 vacc_hes_1  <- lm(vacc_hesitant  ~ 
                     total_pop + pop_density + unemployment_rate + 
                     over_65 + poverty_rate + median_income + broadband,
                   data = vacc_hes)
-vacc_hes_2 <- lm(vacc_hesitant  ~  covid_19_vaccine +     
-                   coronavirus +covid_19,
+vacc_hes_2 <- lm(vacc_hesitant  ~  covid_19_vaccine + vaccine + 
+                   coronavirus_disease + coronavirus_virus,
                  data = vacc_hes)
-vacc_hes_2b <- lm(vacc_hesitant  ~ covid_conspiracy + covid_19_vaccine +
-                    coronavirus +covid_19,
-                  data = vacc_hes)
 vacc_hes_3  <- lm(vacc_hesitant  ~ 
                     total_pop + pop_density + unemployment_rate + 
                     over_65 + poverty_rate + median_income + broadband + 
-                    covid_19_vaccine +
-                    coronavirus +covid_19,
+                    covid_19_vaccine + vaccine + 
+                   coronavirus_disease + coronavirus_virus,
                    data = vacc_hes)
 
-modelsummary(list(vacc_hes_2, vacc_hes_2b, vacc_hes_1, vacc_hes_3), 
+modelsummary(list(vacc_hes_2, vacc_hes_1, vacc_hes_3), 
              # title = "Linear Regression Results for Vaccine Hesitancy",
              notes= c('* p < .05. ** p < .01. *** p < .001 (two-tailed test).'),
              estimate = "{estimate}{stars}",
@@ -533,19 +547,21 @@ modelsummary(list(vacc_hes_2, vacc_hes_2b, vacc_hes_1, vacc_hes_3),
 ```
 
 The second attitudinal measure I test is how Google Trends relates to rare mask
-usage. As with vaccine hesitancy, the Pearson correlations are weak, if not 
-negligible. I introduce these trends in multiple linear regression in table 
-\@ref(tab:mask_analysis). Model 1 demonstrates that these three Google Search
-Trends can explain about 9% of the variance in mask usage across U.S. counties,
-reinforcing the conclusion that the relationship is quite weak. The coefficients
-themselves are somewhat significant in Model 1. However, after including the
-demographic varaibles in Models 2 and 3, we see that the relationship between
-the Google Search Trends and mask usage is strengthed in magnitude and in
-significance, likely indicating a repression effect due to background
-relationships between the trends and demograhic variables. While the trends are
-significant and match the magnitude of the demographic variables, the low $r^2$ 
-for the trends still provides evidence that Google Search Trends data cannot 
-replace survey analysis when trying to measure rare mask usage. 
+usage. As with vaccine hesitancy, the Pearson correlations are negligible.
+Correlation's under |0.20| are considered to be negigible according to the
+common rules of thumb. I introduce these trends in multiple linear regression in
+table \@ref(tab:mask_analysis). Model 1 demonstrates that these five Google
+Search Trends can explain about 7% of the variance in mask usage across U.S.
+counties, reinforcing the conclusion that the relationship is quite weak. The
+coefficients themselves are somewhat significant in Model 1. However, after
+including the demographic variables in Models 2 and 3, we see that the
+relationship between the Google Search Trends and mask usage is strengthened in
+magnitude and in significance, likely indicating a suppression effect due to
+underlying relationships between the trends and demographic variables. While the
+trends are significant and match the demographic variables in magnitude, the
+low $r^2$ of 0.203 for the trends still provides evidence that Google Search
+Trends data cannot replace survey analysis when trying to measure rare mask
+usage.
 
 
 ```{r mask_analysis}
@@ -554,20 +570,26 @@ replace survey analysis when trying to measure rare mask usage.
 
 mask <- mask %>% 
   select(-c(DMA_google, Geo_QName)) %>% 
-  mutate(across(face_mask:broadband  , ~ scale(.x, center=TRUE, scale=TRUE)[,1]))
+  mutate(across(coronavirus_disease:broadband  , ~ scale(.x, center=TRUE, scale=TRUE)[,1]))
 
 
 mask_1  <- lm(mask_rare  ~ 
-                    total_pop + pop_density + unemployment_rate + 
-                    over_65 + poverty_rate + median_income + broadband,
-                  data = mask)
-mask_2 <- lm(mask_rare  ~  face_mask + mask + cloth_face_mask,
-                 data = mask)
+                total_pop + pop_density + unemployment_rate + 
+                over_65 + poverty_rate + median_income + broadband,
+              data = mask)
+
+mask_2 <- lm(mask_rare  ~ coronavirus_disease +
+               coronavirus_virus + cloth_face_mask + 
+               mask + civil_and_political_rights,
+             data = mask)
+
 mask_3  <- lm(mask_rare  ~ 
-                    total_pop + pop_density + unemployment_rate + 
-                    over_65 + poverty_rate + median_income + broadband + 
-                    face_mask + mask + cloth_face_mask,
-                   data = mask)
+                total_pop + pop_density + unemployment_rate + 
+                over_65 + poverty_rate + median_income + broadband + 
+                coronavirus_disease +
+                coronavirus_virus + cloth_face_mask + 
+                mask + civil_and_political_rights,
+              data = mask)
 
 modelsummary(list(mask_2, mask_1, mask_3), 
              # title = "Linear Regression Results for Rare Mask Usage",
@@ -580,11 +602,30 @@ modelsummary(list(mask_2, mask_1, mask_3),
 ```
 
 
-## Medical
+## Validating Google Trends as metrics of health outcomes
+
+In addition to attitudinal measures, I attempt to validate Google Trends for
+uses in the measurements of health indicators. The first indicator I test is
+Covid-19 case rates from 2020 through 2021. The Pearson correlation results
+indicate negligible to weak relationships between the search terms and the
+actual case rates across time and place. The repeated measures correlation
+coefficient, a more reliable and less biased measure for longitudinal
+correlations, reveals similarly weak results with a maximum correlation of 0.32
+between 'smell loss' and rates of Covid-19. To further test the relationship, I
+include the three trends in random intercept hierarchical linear models. Model 1
+of table \@ref(tab:covid_analysis) indicates that the trends themselves are able
+to explain about 20% of the variation in Covid-19 rates ($r^2$ = 0.201). Few
+of the demographic variables have an effect on Covid-19 rates in models 2 or 3,
+though it seems there is some suppression for median income, unemployment rates,
+and population density. Model 3 has an $r^2$ of 0.200. I conclude that the
+Google Trends are slightly related to Covid-19 rates, but that this relationship
+is weak and we should not attempt to use Google Trends as an indicator of actual
+health outcomes.
 
 
 ```{r covid_analysis}
 covid <- covid %>% 
+  ungroup() %>% 
   select(-c(dma_google, Geo_QName, county, state)) %>% 
   mutate(across(covid_19:broadband  , ~ scale(.x, center=TRUE, scale=TRUE)[,1])) %>% 
   left_join(covid %>%
@@ -615,24 +656,37 @@ modelsummary(list(covid_2, covid_1, covid_3),
              notes= c('* p < .05. ** p < .01. *** p < .001 (two-tailed test).',
                       'Random intercept per county'),
              estimate = "{estimate}{stars}",
-             gof_omit = 'AIC|BIC|ICC|RMSE') %>%
+             gof_omit = 'AIC|BIC|ICC|RMSE|SD') %>%
   kable_styling(latex_options = c("hold_position", 'condensed'),
                 font_size = 8)
 
 # TODO Drop SD intercept and observations,
 
 ```
-pearson correlations
-rmcorr
-rsquared
-coefficients
-conclusion
+
+Another indicator of health outcomes I test to validate Google Trends as
+possible health indicators are county suicide rates. As with previous cases,
+there is only negligible correlation between actual suicide rates and Google
+Search Trends, not exceeding 0.0845. In the more accurate repeated measures
+correlation coefficient we see a maximum of 0.142 correlation, remaining
+negligible. I introduce these trends into a random intercept model to control
+for inter-group variation over time in table \@ref(tab:suicide_analysis). While
+table \@ref(tab:suicide_analysis) model 1 reveals a significant relationship
+between suicide hotline trends and suicide rates, the effect is small and the
+entire model only has an $r^2$ of 0.058. Adding in demographic features in model
+2 improves the $r^2$ quite a lot. In model 3, the inclusion of Google Trends
+actually decreases the overall amount of suicide rate variance explained
+compared to model 2. These analyses lead me to conclude that Google Search
+Trends should not be used as indicators of suicide rates or intentions.
 
 
 ```{r suicide_analysis}
 suicide <- suicide %>% 
-  select(-c(dma_google, Geo_QName, county, population, deaths)) %>% 
-  mutate(across(suicide:broadband  , ~ scale(.x, center=TRUE, scale=TRUE)[,1])) %>% 
+  select(-c(DMA_google, Geo_QName, county, population, deaths)) %>%
+  ungroup() %>% 
+  mutate(across(death_rate:broadband, ~ scale(.x, center=TRUE, scale=TRUE)[,1])) 
+
+suicide <- suicide %>% 
   left_join(suicide %>%
               group_by(fips) %>%
               summarize(death_rate_fips_mean = mean(death_rate , na.rm = TRUE)),
@@ -642,19 +696,25 @@ suicide <- suicide %>%
 
 suicide_1  <- lme(death_rate   ~ 
                   total_pop + pop_density + unemployment_rate + 
-                  over_65 + poverty_rate + median_income + broadband +
-                  death_rate_fips_mean + year,
+                  over_65 + poverty_rate + median_income +
+                  # death_rate_fips_mean +
+                    year,
                 random = ~ 1 | fips, na.action=na.omit,data = suicide)
 suicide_2 <- lme(death_rate   ~  
-                 suicide + depression + suicide_hotline + death_rate_fips_mean  + 
+                 suicide + depression + suicide_hotline + 
+                   # death_rate_fips_mean  +
                  year,
                random = ~ 1 | fips, na.action=na.omit, data = suicide)
 suicide_3  <- lme(death_rate   ~ 
                   total_pop + pop_density + unemployment_rate + 
-                  over_65 + poverty_rate + median_income + broadband + 
-                  suicide + depression + suicide_hotline + death_rate_fips_mean  +
+                  over_65 + poverty_rate + median_income +
+                  suicide + depression + suicide_hotline +
+                    # death_rate_fips_mean  +
                   year,
                 random = ~ 1 | fips, na.action=na.omit, data = suicide)
+
+
+
 
 modelsummary(list(suicide_2, suicide_1, suicide_3), 
              # title = "Hierarchical Model for Suicide Rates",
@@ -663,50 +723,68 @@ modelsummary(list(suicide_2, suicide_1, suicide_3),
              estimate = "{estimate}{stars}",
              gof_omit = 'AIC|BIC|ICC|RMSE') %>%
   kable_styling(latex_options = c("hold_position", 'condensed'),
-                font_size = 8)
+                font_size = 10)
 
 # TODO Drop SD intercept and observations,
 # TODO why is the r2 so high? death_rate_fips_mean?
 ```
-pearson correlations
-rmcorr
-rsquared
-coefficients
-conclusion
 
+## Validating Google Trends as metrics of political support
 
-## Political
+Previous research has showed some relationship between Google Search Trends and
+political election results. I test here the relationships between search trends
+and U.S. Presidential Election results in 2016 and 2020. In 2016, Pearson
+correlations for Both Hilary Clinton and Donald Trump do not exceed a |0.17|
+correlation with the actual percentage of votes for either candidate. In 2020,
+results are even less related, with searches for neither Joe Biden nor Donald
+Trump holding any real correlation with the 2020 results.
 
+In table \@ref(tab:pres_2016_analysis), I outline the results for the model
+predicting the county percentage of votes for Hillary Clinton. Model 1
+demonstrates how well Google Trends are able to predict the votes; while the
+trend for 'Hillary Clinton' is significantly associated with votes, the model's
+$r^2$ ($r^2$ = 0.027) shows that it does little to help explain the model
+variance. On the other hand, adding in demographic features improves the model
+fit quite well, bringing the $r^2$ up to 0.313 in model 2 and $r^2$ 0.327 in
+model 3. In table \@ref(tab:pres_2020_analysis) shows this same analysis for the
+2020 election and predicts the percentage of votes for Joe Biden. While this
+model is largely similar to those in table \@ref(tab:pres_2016_analysis), this
+model 1 demonstrates how unrelated Google Trends can be from actual outcomes. In
+conclusion, I find that Google Trends are an unreliable and invalid indicator of
+political support.
 
 ```{r pres_2016_analysis}
 pres_2016 <- pres_2016 %>% 
   select(-c(Geo_QName, dma)) %>% 
-  mutate(across(c(`Hilary Clinton`,`Donald Trump`:broadband)  , ~ scale(.x, center=TRUE, scale=TRUE)[,1]))
+  mutate(across(c(hillary_clinton_trend,donald_trump_trend:broadband)  , ~ scale(.x, center=TRUE, scale=TRUE)[,1]))
 
 vacc_hes_1a  <- lm(clinton_p   ~ 
                     total_pop + pop_density + unemployment_rate + 
                     over_65 + poverty_rate + median_income,
                   data = pres_2016)
-vacc_hes_2a <- lm(clinton_p   ~  `Donald Trump` + `Hilary Clinton`,
+vacc_hes_2a <- lm(clinton_p   ~  
+                    # donald_trump_trend + 
+                    hillary_clinton_trend,
                  data = pres_2016)
 
 vacc_hes_3a  <- lm(clinton_p   ~ 
                     total_pop + pop_density + unemployment_rate + 
                     over_65 + poverty_rate + median_income + 
-                     `Donald Trump` + `Hilary Clinton`,
+                     # donald_trump_trend + 
+                     hillary_clinton_trend,
                    data = pres_2016)
 
 vacc_hes_1b  <- lm(trump_p    ~ 
                     total_pop + pop_density + unemployment_rate + 
                     over_65 + poverty_rate + median_income,
                   data = pres_2016)
-vacc_hes_2b <- lm(trump_p    ~  `Donald Trump` + `Hilary Clinton`,
+vacc_hes_2b <- lm(trump_p    ~  donald_trump_trend + hillary_clinton_trend,
                  data = pres_2016)
 
 vacc_hes_3b  <- lm(trump_p    ~ 
                     total_pop + pop_density + unemployment_rate + 
                     over_65 + poverty_rate + median_income + 
-                     `Donald Trump` + `Hilary Clinton`,
+                     donald_trump_trend + hillary_clinton_trend,
                    data = pres_2016)
 
 modelsummary(list(vacc_hes_2a,vacc_hes_1a, vacc_hes_3a 
@@ -716,47 +794,48 @@ modelsummary(list(vacc_hes_2a,vacc_hes_1a, vacc_hes_3a
              notes= c('* p < .05. ** p < .01. *** p < .001 (two-tailed test).',
                       'Results predicting Donald J. Trump percentage largely equivalent and available upon request.'),
              estimate = "{estimate}{stars}",
-             gof_omit = 'AIC|BIC|ICC|RMSE'
+             gof_omit = 'AIC|BIC|ICC|RMSE|F'
              ) %>%
   kable_styling(latex_options = c("hold_position", 'condensed'),
-                font_size = 8)
+                font_size = 10)
 
 
 ```
-pearson correlations
-rsquared
-coefficients
-conclusion
 
 ```{r pres_2020_analysis}
 pres_2020 <- pres_2020 %>% 
   select(-c(Geo_QName, dma)) %>% 
-  mutate(across(c(`Joe Biden`,`Donald Trump`:broadband)  , ~ scale(.x, center=TRUE, scale=TRUE)[,1]))
+  mutate(across(c(joe_biden_trend,donald_trump_trend:broadband)  , ~ scale(.x, center=TRUE, scale=TRUE)[,1]))
 
 vacc_hes_1a  <- lm(biden_p   ~ 
                     total_pop + pop_density + unemployment_rate + 
                     over_65 + poverty_rate + median_income,
                   data = pres_2020)
-vacc_hes_2a <- lm(biden_p   ~  `Donald Trump` + `Joe Biden`,
+vacc_hes_2a <- lm(biden_p   ~  
+                    # donald_trump_trend +
+                    joe_biden_trend,
                  data = pres_2020)
 
 vacc_hes_3a  <- lm(biden_p   ~ 
                     total_pop + pop_density + unemployment_rate + 
                     over_65 + poverty_rate + median_income + 
-                     `Donald Trump` + `Joe Biden`,
+                     # donald_trump_trend + 
+                     joe_biden_trend,
                    data = pres_2020)
 
 vacc_hes_1b  <- lm(trump_p    ~ 
                     total_pop + pop_density + unemployment_rate + 
                     over_65 + poverty_rate + median_income,
                   data = pres_2020)
-vacc_hes_2b <- lm(trump_p    ~  `Donald Trump` + `Joe Biden`,
+vacc_hes_2b <- lm(trump_p    ~  donald_trump_trend ,
+                  # +                 joe_biden_trend,
                  data = pres_2020)
 
 vacc_hes_3b  <- lm(trump_p    ~ 
                     total_pop + pop_density + unemployment_rate + 
                     over_65 + poverty_rate + median_income + 
-                     `Donald Trump` + `Joe Biden`,
+                     donald_trump_trend ,
+                   # + joe_biden_trend,
                    data = pres_2020)
 
 modelsummary(list(vacc_hes_2a, vacc_hes_1a, vacc_hes_3a 
@@ -766,20 +845,19 @@ modelsummary(list(vacc_hes_2a, vacc_hes_1a, vacc_hes_3a
              notes= c('* p < .05. ** p < .01. *** p < .001 (two-tailed test).',
                       'Results predicting Donald J. Trump percentage largely equivalent and available upon request.'),
              estimate = "{estimate}{stars}",
-             gof_omit = 'AIC|BIC|ICC|RMSE'
+             gof_omit = 'AIC|BIC|ICC|RMSE|F'
              ) %>%
   kable_styling(latex_options = c("hold_position", 'condensed'),
-                font_size = 8)
+                font_size = 10)
 
 
 ```
-pearson correlations
-rsquared
-coefficients
-conclusion
 
 
 # Discussion
+
+The external validity of these voting 
+
 
 While I expect these tests to show high correlation between observed
 indicators and Google search trends, there will be three important
@@ -805,11 +883,3 @@ potential pitfalls with any source of big data
 
 \newpage
 
-# References {.unnumbered}
-
-::: {#refs}
-:::
-
-\newpage
-
-# Appendix
