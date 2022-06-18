@@ -7,13 +7,9 @@ editor_options:
   markdown: 
     wrap: 72
 output:
-  bookdown::pdf_document2: 
+  pdf_document: 
     keep_tex: true
     latex_engine: xelatex
-    number_sections: true
-  # bookdown::word_document2: 
-  #   toc: true
-  #   reference_docx: StylesTemplate.docx
 header-includes:
    - \usepackage{siunitx}
    - \usepackage{setspace}
@@ -45,7 +41,60 @@ pacman::p_load(tidyverse, glue, extrafont, here, jtools, psych,
                modelsummary, showtext, thematic, kableExtra, scales, nlme,
                flextable)
 
+
+my_palette = c('#56b4e9','#999999','#E69F00','#009E73','#CC79A7','#0072B2','#D55E00','#E69F00')
 my_palette  <- c(MetBrewer::met.brewer(name = 'Cross', type = 'discrete'), '#555F61')
+
+## Automatically use showtext to render text
+font_add_google("Lora", "lora")
+showtext_auto()
+
+theme_diss <- function(base_size = 14) {
+  theme_minimal(base_size = base_size) %+replace%
+    theme(
+      # Figure assembly
+      plot.title = element_text(family="lora",
+                                size = rel(1), 
+                                margin = margin(0,0,5,0), 
+                                hjust = 0),
+      plot.title.position = "plot",
+      plot.subtitle = element_text(family="lora",
+                                   size = rel(0.85)),
+      plot.caption = element_text(family="lora",
+                                  size = rel(0.70),
+                                  hjust = 1),
+      # Graphical Zones
+      panel.grid.minor = element_blank(),
+      panel.border = element_blank(),
+      # Axes
+      axis.title = element_text(family="lora", 
+                                size = rel(0.85)),
+      axis.text = element_text(family="lora", 
+                               size = rel(0.70)),
+      axis.line = element_line(color = "black", 
+                               arrow = arrow(length = unit(0.3, "lines"), 
+                                             type = "closed")),
+      # Legend
+      legend.title = element_text(family="lora",
+                                  size = rel(0.85)),
+      legend.text = element_text(family="lora", 
+                                 size = rel(0.70)),
+      legend.key = element_rect(fill = "transparent", 
+                                colour = NA),
+      legend.key.size = unit(1.5, "lines"),
+      legend.background = element_rect(fill = "transparent", 
+                                       colour = NA),
+      # Facetting 
+      strip.background = element_rect(fill = "#17252D",
+                                      color = "#17252D"),
+      strip.text = element_text(family="lora",
+                                size = rel(0.85), 
+                                color = "white", 
+                                margin = margin(5,0,5,0))
+    )
+}
+
+theme_set(theme_diss()) 
 
 ```
 ```{r data}
@@ -64,153 +113,7 @@ suicide_corrs <- read_rds(here('data', 'from_hpc', 'suicide_corrs.rds'))
 
 ```
 
-# Abstract
-
-Possible titles Digital Trace Data as Social Indicators: Indicators of
-Attention Rather Than Support
-
-Digital Trace Data as Indicators of Social Data: Validating Google Trends for
- use in Scientific Research
-
-**Keywords**:
-
-# Intro
-
-New big data sources have led to vast possibilities for social science
-research because they are bigger, cheaper, and already available
-[@kingEnsuringDataRichFuture2011; @lazerComputationalSocialScience2009;
-@salganikBitBitSocial2017]. Before overenthusiastically embracing these
-sources into our workflows, social scientists must clearly establish
-parameters under which these data sources could be operationalized
-[@bailCulturalEnvironmentMeasuring2014; @lazerParableGoogleFlu2014]. As
-prior research outlined, the "quantity of data does not mean that one
-can ignore foundational issues of measurement and construct validity and
-reliability and dependencies among data" [@lazerParableGoogleFlu2014,
-p. 1203]. Building on this prior research outlining these various
-issues with big data [@boydCriticalQuestionsBig2012;
-@lazerIssuesConstructValidity2015], this paper tests the construct
-validity of Google Search Trends as an indicator of three different
-cases, namely cultural attitudes, disease prevalence and voting
-behavior. These three cases will be tested using cultural indicators
-from the NORC General Social Survey, United States county-level suicide
-rates from National Center for Health Statistics, US cases rates of
-Covid-19 from The New York Times, historical US Presidential Election
-results, and the American National Election Survey. Data will be
-analyzed against corresponding operationalized Google Trends
-longitudinal data using Pearson's r for pairwise correlations, testing
-for the strength of relationships between the Google Trend indicator and
-the respective comparison indicator. This paper will contribute to the
-creation of methodological norms and standards of how to use Google
-Trends as a big data source for societal research and serve as a
-critical inquiry into the adoption of big data without a critical eye
-for the ecological validity of the sources.
-
-With the expansion of big data, some research has shown extremely
-innovative methods that lead to groundbreaking results that are shown to
-be reliable. As an example, @blumenstockPredictingPovertyWealth2015 use
-county-level cell-phone records to construct the distribution of poverty
-and wealth in Rwanda, a country where national surveys and censes are
-rare and costly. However, @blumenstockPredictingPovertyWealth2015 go to
-great lengths to demonstrate that their operationalization of the cell
-phone data creates a reliable and valid construct; few social science
-papers utilizing big data dig into the construct validity of their
-metrics to this extent and even fewer publications focus on
-methodological guidelines of how to use sources of big data
-[@asseoTrackingCOVID19Using2020; @stilesAssessingCriterionValidity2018].
-However, research has shown the small adjustments to an algorithm or
-metric may void any research insight we are able to pull from such data
-[@lazerParableGoogleFlu2014]. Because of this, I propose a
-methodological validation study of the Google Search Trends source of
-big data to investigate how it is advisable to utilize this data in
-social scientific research.
-
-I will use three categorizations of ways I propose Google Trends could
-be operationalized for social scientific usage. First, I'll test Google
-Trends as an operationalization of cultural attitudes with the General
-Social Survey. After @bailCulturalEnvironmentMeasuring2014's call for
-cultural sociologists to utilize the ever-expanding world of big data,
-Google trends as a data source began appearing in sociological and
-social science research. From research on mass shootings and firearms
-[@brownsteinInternetSearchPatterns2020;
-@semenzaInformationseekingWakeTragedy2020], protest and anti-Muslim
-sentiment [@bailUsingInternetSearch2018;
-@barrieSearchingRacismGeorge2020; @grossThereFergusonEffect2017], to
-analyzing country-level changes in social perception [@reyes_etal18],
-Google search trends are a new and innovative indicator of cultural
-interest. Extending into social networks and culture,
-@bailPrestigeProximityPrejudice2019 even used Google trends to measure
-how culture spreads around the globe.
-
-Google Search Trends have also been used continuously in estimations of
-disease prevalence and population health in journals like the Journal of
-Medical Internet Research. While much of this research has focused on
-the Covid-19 pandemic [@jimenez_etal20;
-@jimenezCOVID19SymptomGoogle2020;
-@limEstimatingInformationSeekingBehaviour2020;
-@mavraganiCOVID19PredictabilityUnited2020;
-@nguyenGoogleTrendsAnalysis2020; @todorovaInternetBasedData2021] , other
-research has investigated Google Trends as an indicator of wellbeing
-[@brodeurCOVID19LockdownsWellbeing2021;
-@carpiTwitterSubjectiveWellBeing2020; @duCOVID19IncreasesOnline2020],
-suicidality [@burnettTimeTrendsPublic2020], vaccination uptake
-[@dalumhansenEnsembleLearnedVaccination2016], obesity
-[@sarigulNowcastingObesityUsing2014], and even insomnia
-[@zittingGoogleTrendsReveal2020], to cover a few examples. For a partial
-review of other utilizations, see @nutiUseGoogleTrends2014. According to
-@jaidkaInformationseekingVsSharing2021, the majority of studies profess
-a correlation of \> .70, "demonstrating the vast potential of Google
-Search as a proxy for monitoring population health" (p. 3) based on
-assumptions that individuals search because of self-diagnosis and to
-identify possible courses of treatment
-[@dechoudhurySeekingSharingHealth2014].
-
-<!-- Following reports say that Google searches can predict covid  -->
-
-<!-- 14. Brunori, P. & Resce, G. Searching for the peak Google Trends and the Covid-19 outbreak in Italy. SERIES working papers N. 04/2020 -->
-
-<!-- Lampos, V. et al. Tracking COVID-19 using online search. Preprint at https://arxiv.org/abs/2003.08086 (2020). -->
-
-<!-- 16. Walker, A., Hopkins, C. & Surda, P. The use of google trends to investigate the loss of smell related searches during COVID‐19 -->
-
-<!-- outbreak. Int. Forum Allergy Rh. 10, 839–847 (2020). -->
-
-<!-- 17. Stephens-Davidowitz, S. Google Searches Can Help Us Find Emerging Covid-19 Outbreaks. The New York Times https://www. -->
-
-<!-- nytimes.com/2020/04/05/opinion/coronavirus-google-searches.html (2020). -->
-
-<!-- 18. Frank, T. Goldman says fewer ‘loss of smell’ Google queries suggest better COVID outlook. Consumer News and Business Channel. CNBC https://www.cnbc.com/2020/04/15/goldman-says-fewer-loss-of-smell-google-searches-is-a-positive-sign-for-pande -->
-
-<!-- mic.html (2020) -->
-
-Various sources have also used Google Trends as a way to forecast
-political elections and political attitudes
-[@wolfTrendingRightDirection2018]. For instance,
-@swearingenGoogleInsightsSenate2014 investigate how U.S. Senate
-Elections relate to attention measured by search traffic.
-@prado-romanGoogleTrendsPredictor2020 compare how Google Search trends
-are able to predict presidential election results in both the United
-States and Canada. Finally, the OECD Development Centre is investigating
-how Google data can help elucidate governments' approval in Latin
-America [@montoyaUsingGoogleData2020].
-
-Research Question - How can we operationalize Google Search Trends as a
-valid indicator for uses in social science research?
-
-<https://journals.sagepub.com/doi/10.1177/0894439316631043> What
-constructs might google trends capture and not capture well? Capture
-attention but not attitudes
-
-Also Asseo - "we assumed that media coverage may potentially decouple
-the search popularity from the number of cases, since searches would
-result not only from self-symptoms, but also from interest elicited by
-media coverage."
-
 # Research Methodology
-To investigate the construct and criterion validity of the use of Google Trends
-in these three areas, I gathered geo-located social science data across multiple
-sources to address the three areas of inquiry for this paper.  Table
-\@ref(tab:data-sources-table) outlines which data sources are used for this
-project and which trends are matched to each source.
 
 ```{r data-sources-table}
 #| results='asis'
@@ -249,173 +152,92 @@ data_sources %>%
 
 ```
 
-
 ## Measures
-### Google Trends
-This paper focuses on a validation of Google search trends [@googletrends].
-Google trends portray the search frequency for specific search terms across
-designated media markets areas (DMAs), a nonoverlapping aggregation of U.S.
-counties to 210 media markets based on similar population clusters [@dma_key].
-Raw data is on a scale from 0 to 100, with 100 being the maximum search
-popularity out of all DMAs. When available, I use Google search topics to
-measure trends as opposed to search terms. Search topics are a more robust
-measurement than a single search term: topics are aggregations of the rates of
-multiple, highly correlated search terms together into a cohesive topic. For
-example, while 'Beyoncé', 'Beyonce' and 'beyonce knowles' are all separate
-search terms, 'Beyoncé Knowles' encompasses all of these into a single search
-topic. Google Search Trend are only available cross-sectionally (a single time
-period across a geography) or as time-series (a single geo-location across
-time). To remedy this and build a longitudinal dataset of each search topic for
-the longitudinal datasets, I follow the method proposed in @park_etal (p. 5).
-This method involves building a dataset of unscaled cross-sectional values,
-selecting a DMA to use to establish the rescaling ratio (I use 'Los Angeles
-CA'), and then finding the time-series values for the one DMA. To find the
-rescaling ratio for each week in the time-series, you divide the time-series
-value for each week by the cross-sectional value for each week, resulting in a
-rescaling vector to be used for all weeks in the dataset across geographies. To
-rescale each longitudinal value, multiply the respective week's rescaling ratio
-by the cross-sectional value. Rescaled longitudinal data was compared against
-time-series data for multiple test counties and was equivalent. For a more
-in-depth explanation of this procedure, see @park_etal (p. 5). Missing
-datapoints in longitudinal datasets were filled in with interpolated values
-using `zoo::na.approx()` [@zoo].
+
+```{r}
+desc_stats_table <- 
+  vacc_hes  %>% 
+  bind_rows(mask) %>% 
+  bind_rows(covid) %>% 
+  bind_rows(suicide) %>% 
+  bind_rows(pres_2016 ) %>% 
+  bind_rows(pres_2020 ) 
+
+datasummary(formula = 
+          (`Rate of Vaccine Hesitancy` = vacc_hesitant) +             
+          (`Rate of Rare Mask Usage` = mask_rare) +   
+          (`Rate of Covid` = covid_rate) +                 
+          (`Rate of Deaths by Suicide` = death_rate) +                
+          (`Percent of votes for Joe Biden` = biden_p) +                   
+          (`Percent of votes for Donald Trump` = trump_p) +                    
+          (`Percent of votes for Hillary Clinton` = clinton_p) + 
+          (`Search for Covid-19` = covid_19) +                  
+          (`Search for Covid-19 Vaccine` = covid_19_vaccine) +
+          (`Search for Vaccine` = vaccine) +
+          (`Search for coronavirus virus` = coronavirus_virus) +
+          (`Search for coronavirus disease` = coronavirus_disease) +
+          (`Search for Civil and political rights` = civil_and_political_rights) +
+          (`Search for cloth face mask` = cloth_face_mask) +
+          (`Search for Mask` = mask) +
+          (`Search for Taste Loss` = taste_loss) +                 
+          (`Search for Smell Loss` = smell_loss) + 
+          (`Search for Suicide` = suicide) +                    
+          (`Search for Depression` = depression) +                
+          (`Search for Suicide Hotline` = suicide_hotline) +  
+          (`Search for Hillary Clinton` = hillary_clinton_trend) +     
+          (`Search for Donald Trump` = donald_trump_trend) +        
+          (`Search for Joe Biden` = joe_biden_trend) +         
+          (`Total Population` = total_pop) +  
+          (`Population Density` = pop_density) +                
+          (`Unemployment Rate` = unemployment_rate) +         
+          (`% over 65` = over_65) +                   
+          (`% below poverty line` = poverty_rate) +               
+          (`Median income` = median_income) +             
+          (`% with broadband` = broadband)  ~ 
+    (Min  + Max + Mean + SD) ,
+  data = desc_stats_table,
+  fmt = '%.2f',
+  title = 'Descriptive Statistics for Dichotomous and Numeric Variables',
+  output = "latex")
+
+```
 
 
-### attitudinal
+#### vacc_hes
 
-<!-- [@gss_data] (let's see if I get access first) -->
+`r nrow(vacc_hes)`
 
-One measure of attitudinal indicators is the Vaccine Hesitancy for COVID-19
-[@vaches_data]. The CDC uses the U.S. Census Bureau’s Household Pulse Survey
-(HPS) and the 2019 American Community Survey (ACS) 1-year Public Use Microdata
-Sample (PUMS) to measure U.S. residents’ intentions to receive the COVID-19
-vaccine if available during May 26, 2021 – June 7, 2021. This dataset consists
-of `r nrow(vacc_hes)` observations, one for each U.S. County. The variable
-measures the precent of adults in the county who describe themselves as
-“unsure”, “probably not”, or “definitely not” going to get a COVID-19 vaccine
-once one is available to them. The variable ranges from 
-`r percent_format(0.01)(min(vacc_hes$vacc_hesitant))` to 
-`r percent_format(0.01)(max(vacc_hes$vacc_hesitant))`. 
+from `r percent_format(0.01)(min(vacc_hes$vacc_hesitant))` to 
+`r percent_format(0.01)(max(vacc_hes$vacc_hesitant))`.  
 
-Another attitudinal indicator I use is the Mask-Wearing Survey Data conducted by
-Dynata for the New York Times from July 2 through 14, 2020 [@mask_data]. 250,000
-survey respondents were asked, "How often do you wear a mask in public when you
-expect to be within six feet of another person?". The NYT weighted each response
-to create a county level measure of what percent of the county never, rarely,
-sometimes, frequently, and always wore a mask when in public. This dataset
-consists of `r nrow(mask)` observations, one for each U.S. County. This measure
-represents the percent of adults in the county who never or rarely wear a mask
-(range = `r percent_format(0.01)(min(mask$mask_rare))` to 
+#### mask
+(range = `r percent_format(0.01)(min(mask$mask_rare))` to  
 `r percent_format(0.01)(max(mask$mask_rare))`)
 
 ### health
-
-I also use U.S. Covid-19 rates to validate health and disease related topics. I
-retrieve U.S. county-level Covid-19 rates from by @covid_data, who compile this
-data based on reports from state and local health agencies. It is widely
-acknowledged that there are biases in this data due to inconsistencies and
-availability in testing as well as different community propensity to test
-[@gu22; @cdc20a] However, it is the best measure we have of actual case rates.
-Case Rate is measured as number of cases per 100,000 population. Observations
-vary from a minimum of 0 to a maximum of `r max(covid$covid_rate)` for each 
+#### covid
+0 to a maximum of `r max(covid$covid_rate)` for each 
 Monday from `r glue("{format( min(covid$date), '%B %d, %Y')} through {format(max(covid$date), '%B %d, %Y')}")`.
 There are `r nrow(covid)` cases across `r nrow(count(covid, fips))` 
-counties and `r nrow(count(covid, date))` dates. Missing data were interpolated 
-using `zoo::na.approx()` [@zoo].
+counties and `r nrow(count(covid, date))` dates. 
 
-I also use county-level suicide rates from the US Centers for Disease Control
-and Prevention [-@suic_data]. Data is grouped by year from 2010-2020. Raw death
-rates are scaled by population size for each year and can be interpreted as the
-death rate by suicide for every 1000 people. There are `r nrow(suicide)` total
-cases, resulting from `r nrow(count(suicide, year))` observations of `r
-nrow(count(suicide, fips))` counties. Missing data were interpolated using
-`zoo::na.approx()` [@zoo]. Measures range from 
-`r round(min(suicide$death_rate, na.rm=T),3)` to 
+#### suicide
+ There are `r nrow(suicide)` total
+cases, resulting from `r nrow(count(suicide, year))` observations of 
+`r nrow(count(suicide, fips))` counties. Missing data were interpolated using.
+
+Measures range from `r round(min(suicide$death_rate, na.rm=T),3)` to 
 `r round(max(suicide$death_rate, na.rm=T),3)`.
 
 ### political
-Finally, I test Google Trends as an operationalization of political
-attitudes by first looking at actual voting outcomes in historical US
-Presidential Election results. This data comes from @pres_data, who scraped the
-results from Townhall.com, Fox News, Politico, and the New York Times. Data on 
-presidential outcomes were avaiable for `r nrow(pres_2016)` counties in 2016 and
-`r nrow(pres_2020)` counties in 2020. Each variable measures the percent of votes
-for the candidate, with the lowest percent at 
+ avaiable for `r nrow(pres_2016)` counties in 2016   
+ and `r nrow(pres_2020)` counties in 2020. 
+ 
+with the lowest percent at 
 `r percent_format(0.01)(min(pres_2020$biden_p, na.rm=T))`
 and the highest at `r percent_format(0.01)(max(pres_2020$biden_p, na.rm=T))`. 
 
-In addition, I use data on political opinions from the the American National
-Election Survey 2020 Time-Series Study [@anes_data]. This data is paired with
-restricted data provided by ICPSR, the Inter-university Consortium for Political
-and Social Research, that contains the geo-ids of the `r scales::label_comma()(5441)`
-survey respondents. The study interviewed respondents in a pre-election survey
-that was conducted between August 18, 2020 and the day of the US Presidential
-election day, November 3, 2020.
 
-<!-- TODO: WHICH VARIABLES -->
-<!-- TODO: VARIABLE SCALE -->
-
-
-### Other
-
-In addition to specific outcomes of interest, I also gathered various county
-controls to investigate possible variable confounding. The first Seven of these
-variables come from the 2010-2019 5-year American Community Surveys [@acs2019;
-@acs2018; @acs2017; @acs2016; @acs2015; @acs2014; @acs2013; @acs2012;
-@acs2011; @acs2010]. These data include total population, population density,
-unemployment rate for those 16 and over, median county income, average commute
-time, percent of households living under the poverty line, and percent above 65
-years old. In addition, some models employ the U.S. Current Population Survey &
-American Community Survey Geographic Estimates of Internet Use, 1997-2018
-[@internet_use] to estimate households with broadband internet subscriptions.
-This final variable is an attempt to capture the latent propensity to use the
-internet for information search.
-
-<!-- ACS 5 year estimates -->
-<!-- a00001 total population -->
-<!-- a00002 population density -->
-<!-- a17005 unemployment rate 16+ -->
-<!-- a14006 median income -->
-<!-- a09003 average commute time -->
-<!-- poverty percent -->
-<!-- 01001B 65 plus -->
-
-
-## Analysis
-Google Search Trends data and additional demographic data are merged with each
-individual indicator based on County FIPS Codes and date. After creating these
-different datasets, I use the Pearson correlation formula (formula
-\@ref(eq:pearsoncorr)) for cross-sectional numeric data to calculate the
-strength of the relationship between each Google Trend and the respective
-data source.
-
-\begin{equation}
- r =
-  \frac{ \sum_{i=1}^{n}(x_i-\bar{x})(y_i-\bar{y}) }{
-        \sqrt{\sum_{i=1}^{n}(x_i-\bar{x})^2}\sqrt{\sum_{i=1}^{n}(y_i-\bar{y})^2}} (\#eq:pearsoncorr)
-\end{equation}
-
-To address longitudinal correlations, I employ Repeated Measures Correlation
-using the `rmcorr` package in R [@bland1995; @bakdash2017]. Repeated Measures
-Correlation is useful for determining the within-county association for paired
-measures across time and counties. Results of these correlations can be seen in 
-table \@ref(tab:corr-results).
-
-As an additional test of the relationships, I employ multiple linear regression
-(for cross-sectional datasets) and random intercept hierarchical linear models
-[@pinheiro_etal21] (for longitudinal datasets) to identify the strength of
-relationships across locales: I include city-data like county population size,
-broadband rates, and median income to attempt to disentangle possible
-confounders of the relationship between Google search Trends and verified
-indicators. Identifying these possible confounded relationships will help to
-explain why some articles find relationships between the trends and outcomes
-while others did not. For linear regression models, I normalize independent
-variables, i.e.variables have been centered and scaled to have a mean of 0 and
-standard deviation 1.
-
-# Results
-
-## Validating Google Trends as metrics of attitudinal indicators
 
 ```{r corr-results}
 #|  results='asis'
@@ -495,24 +317,25 @@ as_flextable(table2, hide_grouplabel = TRUE) %>%
   bg(i = ~ !is.na(grp), bg = "#bad7db", part = "body")
 ```
 
-The first attitudinal indicators is Vaccine Hesitancy for COVID-19 vaccines
-[@vaches_data]. When comparing the measure of vaccine hesitancy to four
-different Google Search Trends, the correlation does not exceed -0.4657
-('Coronavirus (Disease)' and vaccine hesitancy). Correlation's under |0.40| are
-considered to be weak according to the common rules of thumb. When running these
-correlations in multiple linear regression (see the results in table
-\@ref(tab:vacc_hes_analysis)), I see an $r^2$ of 0.233 (Model 1) and 0.411
-(Model 2), indicating that the Google Trends are able to explain about 23% of
-the variation in Vaccine Hesitancy alone. Demographic characteristics like the
-percentage of households with broadband internet and the population density are
-able to explain about 35% of the variation (model 2), outperforming the first
-models. The Trend coefficients themselves, however, are significant and remain
-significant when controlling for demographics. This reinforces the finding from
-the Pearson Correlation that there is a significant but weak relationship
-between the Google Trends and Vaccine Hesitancy.
+
+```{r vacc_hes_plot}
+
+vacc_hes %>% 
+  select(vacc_hesitant, covid_19_vaccine,
+         vaccine, coronavirus_disease,
+         coronavirus_virus, fips) %>% 
+  pivot_longer(cols = -c(vacc_hesitant, fips)) %>% 
+  ggplot(aes(x=value, y = vacc_hesitant)) + 
+  geom_point(aes(group = name, color = name ), show.legend = FALSE, alpha = 0.6) +
+  geom_smooth( aes(group = name),method = 'lm', fill = my_palette[10], color = my_palette[10]) +
+  labs(x = '', 
+       y = "Percent of adults who are vaccine hesitant")+ 
+  scale_y_continuous(labels = scales::label_percent()) +
+  scale_color_manual(values = my_palette[c(3,6,8,4)]) + 
+  facet_wrap(~name)
+```
 
 ```{r vacc_hes_analysis}
-#| tab.cap = "Linear Regression Results for Vaccine Hesitancy",
 #|  results='asis'
 
 
@@ -535,38 +358,36 @@ vacc_hes_3  <- lm(vacc_hesitant  ~
                    data = vacc_hes)
 
 modelsummary(list(vacc_hes_2, vacc_hes_1, vacc_hes_3), 
-             # title = "Linear Regression Results for Vaccine Hesitancy",
+             title = "Linear Regression Results for Vaccine Hesitancy",
              notes= c('* p < .05. ** p < .01. *** p < .001 (two-tailed test).'),
              estimate = "{estimate}{stars}",
              gof_omit = 'AIC|BIC|ICC|RMSE'
-             ) %>%
-  kable_styling(latex_options = c("hold_position", 'condensed'),
-                font_size = 8)
+             ) 
 
 
 ```
 
-The second attitudinal measure I test is how Google Trends relates to rare mask
-usage. As with vaccine hesitancy, the Pearson correlations are negligible.
-Correlation's under |0.20| are considered to be negigible according to the
-common rules of thumb. I introduce these trends in multiple linear regression in
-table \@ref(tab:mask_analysis). Model 1 demonstrates that these five Google
-Search Trends can explain about 7% of the variance in mask usage across U.S.
-counties, reinforcing the conclusion that the relationship is quite weak. The
-coefficients themselves are somewhat significant in Model 1. However, after
-including the demographic variables in Models 2 and 3, we see that the
-relationship between the Google Search Trends and mask usage is strengthened in
-magnitude and in significance, likely indicating a suppression effect due to
-underlying relationships between the trends and demographic variables. While the
-trends are significant and match the demographic variables in magnitude, the
-low $r^2$ of 0.203 for the trends still provides evidence that Google Search
-Trends data cannot replace survey analysis when trying to measure rare mask
-usage.
 
+
+```{r mask_plot}
+mask %>% 
+  select(mask_rare,  coronavirus_disease,
+               coronavirus_virus, cloth_face_mask, 
+               mask, fips) %>% 
+  pivot_longer(cols = -c(mask_rare, fips)) %>% 
+  ggplot(aes(x=value, y = mask_rare, )) + 
+  geom_point(aes(group = name, color = name ), show.legend = FALSE, alpha = 0.6) +
+  geom_smooth( aes(group = name), method = 'lm', fill = my_palette[10], color = my_palette[10]) +
+  labs(x = '', 
+       y = "Percent of adults who rarely use masks")+ 
+  scale_y_continuous(labels = scales::label_percent()) +
+  scale_color_manual(values = my_palette[c(3,6,8,4)]) + 
+  facet_wrap(~name)
+```
 
 ```{r mask_analysis}
-#|  results='asis',
-#| tab.cap = "Linear Regression Results for Rare Mask Usage"
+#|  results='asis'
+
 
 mask <- mask %>% 
   select(-c(DMA_google, Geo_QName)) %>% 
@@ -580,7 +401,7 @@ mask_1  <- lm(mask_rare  ~
 
 mask_2 <- lm(mask_rare  ~ coronavirus_disease +
                coronavirus_virus + cloth_face_mask + 
-               mask + civil_and_political_rights,
+               mask,
              data = mask)
 
 mask_3  <- lm(mask_rare  ~ 
@@ -588,42 +409,36 @@ mask_3  <- lm(mask_rare  ~
                 over_65 + poverty_rate + median_income + broadband + 
                 coronavirus_disease +
                 coronavirus_virus + cloth_face_mask + 
-                mask + civil_and_political_rights,
+                mask,
               data = mask)
 
 modelsummary(list(mask_2, mask_1, mask_3), 
-             # title = "Linear Regression Results for Rare Mask Usage",
+             title = "Linear Regression Results for Rare Mask Usage",
              notes= c('* p < .05. ** p < .01. *** p < .001 (two-tailed test).'),
              estimate = "{estimate}{stars}",
-             gof_omit = 'AIC|BIC|ICC|RMSE') %>%
-  kable_styling(latex_options = c("hold_position", 'condensed'),
-                font_size = 8)
+             gof_omit = 'AIC|BIC|ICC|RMSE') 
 
 ```
 
 
-## Validating Google Trends as metrics of health outcomes
-
-In addition to attitudinal measures, I attempt to validate Google Trends for
-uses in the measurements of health indicators. The first indicator I test is
-Covid-19 case rates from 2020 through 2021. The Pearson correlation results
-indicate negligible to weak relationships between the search terms and the
-actual case rates across time and place. The repeated measures correlation
-coefficient, a more reliable and less biased measure for longitudinal
-correlations, reveals similarly weak results with a maximum correlation of 0.32
-between 'smell loss' and rates of Covid-19. To further test the relationship, I
-include the three trends in random intercept hierarchical linear models. Model 1
-of table \@ref(tab:covid_analysis) indicates that the trends themselves are able
-to explain about 20% of the variation in Covid-19 rates ($r^2$ = 0.201). Few
-of the demographic variables have an effect on Covid-19 rates in models 2 or 3,
-though it seems there is some suppression for median income, unemployment rates,
-and population density. Model 3 has an $r^2$ of 0.200. I conclude that the
-Google Trends are slightly related to Covid-19 rates, but that this relationship
-is weak and we should not attempt to use Google Trends as an indicator of actual
-health outcomes.
-
+```{r covid_plot}
+covid   %>% 
+    filter(date %in% lubridate::ymd(c('2020-09-14'))) %>% 
+  select(covid_rate, covid_19, smell_loss, taste_loss, fips) %>% 
+  pivot_longer(cols = -c(covid_rate, fips)) %>% 
+  ggplot(aes(x=covid_rate, y = value, group = fips, color = name)) + 
+  geom_point(aes(group = name, color = name ), show.legend = FALSE, alpha = 0.6) +
+  geom_smooth( aes(group = name), method = 'lm', fill = my_palette[10], color = my_palette[10]) +
+  labs(x = '', 
+       y = "COVID-19 case rate on 09-14-2020")+ 
+  scale_color_manual(values = my_palette[c(3,6,8,4)]) + 
+  facet_wrap(~name)
+```
 
 ```{r covid_analysis}
+#|  results='asis'
+
+
 covid <- covid %>% 
   ungroup() %>% 
   select(-c(dma_google, Geo_QName, county, state)) %>% 
@@ -652,35 +467,33 @@ covid_3  <- lme(covid_rate  ~
                 random = ~ 1 | fips, na.action=na.omit, data = covid)
 
 modelsummary(list(covid_2, covid_1, covid_3), 
-             # title = "Hierarchical Model for Covid Case Rates",
+             title = "Hierarchical Model for Covid Case Rates",
              notes= c('* p < .05. ** p < .01. *** p < .001 (two-tailed test).',
                       'Random intercept per county'),
              estimate = "{estimate}{stars}",
-             gof_omit = 'AIC|BIC|ICC|RMSE|SD') %>%
-  kable_styling(latex_options = c("hold_position", 'condensed'),
-                font_size = 8)
+             gof_omit = 'AIC|BIC|ICC|RMSE|SD') 
 
 # TODO Drop SD intercept and observations,
 
 ```
 
-Another indicator of health outcomes I test to validate Google Trends as
-possible health indicators are county suicide rates. As with previous cases,
-there is only negligible correlation between actual suicide rates and Google
-Search Trends, not exceeding 0.0845. In the more accurate repeated measures
-correlation coefficient we see a maximum of 0.142 correlation, remaining
-negligible. I introduce these trends into a random intercept model to control
-for inter-group variation over time in table \@ref(tab:suicide_analysis). While
-table \@ref(tab:suicide_analysis) model 1 reveals a significant relationship
-between suicide hotline trends and suicide rates, the effect is small and the
-entire model only has an $r^2$ of 0.058. Adding in demographic features in model
-2 improves the $r^2$ quite a lot. In model 3, the inclusion of Google Trends
-actually decreases the overall amount of suicide rate variance explained
-compared to model 2. These analyses lead me to conclude that Google Search
-Trends should not be used as indicators of suicide rates or intentions.
-
+```{r suicide_plot}
+suicide   %>% 
+    filter(year == 2019) %>% 
+  select(death_rate, suicide, depression, suicide_hotline, fips) %>% 
+  pivot_longer(cols = -c(death_rate, fips)) %>% 
+  ggplot(aes(x=death_rate, y = value, group = fips, color = name)) + 
+  geom_point(aes(group = name, color = name ), show.legend = FALSE, alpha = 0.6) +
+  geom_smooth( aes(group = name), method = 'lm', fill = my_palette[10], color = my_palette[10]) +
+  labs(x = '', 
+       y = "Death rate by suicide for 2019")+ 
+  scale_color_manual(values = my_palette[c(3,6,8,4)]) + 
+  facet_wrap(~name)
+```
 
 ```{r suicide_analysis}
+#|  results='asis'
+
 suicide <- suicide %>% 
   select(-c(DMA_google, Geo_QName, county, population, deaths)) %>%
   ungroup() %>% 
@@ -714,46 +527,60 @@ suicide_3  <- lme(death_rate   ~
                 random = ~ 1 | fips, na.action=na.omit, data = suicide)
 
 
-
-
 modelsummary(list(suicide_2, suicide_1, suicide_3), 
-             # title = "Hierarchical Model for Suicide Rates",
+             title = "Hierarchical Model for Suicide Rates",
              notes= c('* p < .05. ** p < .01. *** p < .001 (two-tailed test).',
                       'Random intercept per county'),
              estimate = "{estimate}{stars}",
-             gof_omit = 'AIC|BIC|ICC|RMSE') %>%
-  kable_styling(latex_options = c("hold_position", 'condensed'),
-                font_size = 10)
+             gof_omit = 'AIC|BIC|ICC|RMSE') 
 
 # TODO Drop SD intercept and observations,
-# TODO why is the r2 so high? death_rate_fips_mean?
 ```
 
-## Validating Google Trends as metrics of political support
+```{r pres_plot}
+pres_2016_plot <- pres_2016 %>% 
+  select(clinton_p, 
+         # trump_p,
+         donald_trump_trend, hillary_clinton_trend,
+         fips) %>% 
+  pivot_longer(cols = -c(clinton_p, fips), names_to = "trend", values_to = "trend_value") %>% 
+  # pivot_longer(cols = -c(trend, trend_value, fips), names_to = "pres", values_to = "pres_percent") %>% 
 
-Previous research has showed some relationship between Google Search Trends and
-political election results. I test here the relationships between search trends
-and U.S. Presidential Election results in 2016 and 2020. In 2016, Pearson
-correlations for Both Hilary Clinton and Donald Trump do not exceed a |0.17|
-correlation with the actual percentage of votes for either candidate. In 2020,
-results are even less related, with searches for neither Joe Biden nor Donald
-Trump holding any real correlation with the 2020 results.
+  ggplot(aes(x=trend_value, y = clinton_p, color = trend )) + 
+  geom_jitter(show.legend = FALSE, alpha = 0.6) +
+  geom_smooth(method = 'lm', fill = my_palette[10], color = my_palette[10]) +
+  labs(x = '', 
+       y = "% of votes for Hilary Clinton, 2016")+ 
+  scale_y_continuous(labels = scales::label_percent()) +
+  scale_color_manual(values = my_palette[c(3,6,8,4)]) +
+  facet_wrap(~ trend, scales = 'free_x')
+  # facet_grid(rows = vars(pres), cols = vars(trend), scales = 'free_x')
 
-In table \@ref(tab:pres_2016_analysis), I outline the results for the model
-predicting the county percentage of votes for Hillary Clinton. Model 1
-demonstrates how well Google Trends are able to predict the votes; while the
-trend for 'Hillary Clinton' is significantly associated with votes, the model's
-$r^2$ ($r^2$ = 0.027) shows that it does little to help explain the model
-variance. On the other hand, adding in demographic features improves the model
-fit quite well, bringing the $r^2$ up to 0.313 in model 2 and $r^2$ 0.327 in
-model 3. In table \@ref(tab:pres_2020_analysis) shows this same analysis for the
-2020 election and predicts the percentage of votes for Joe Biden. While this
-model is largely similar to those in table \@ref(tab:pres_2016_analysis), this
-model 1 demonstrates how unrelated Google Trends can be from actual outcomes. In
-conclusion, I find that Google Trends are an unreliable and invalid indicator of
-political support.
+pres_2020_plot <- pres_2020 %>% 
+  select(biden_p, 
+         donald_trump_trend, joe_biden_trend,
+         fips) %>% 
+  pivot_longer(cols = -c(biden_p, fips), names_to = "trend", values_to = "trend_value") %>% 
+
+  ggplot(aes(x=trend_value, y = biden_p, color = trend )) + 
+  geom_jitter(show.legend = FALSE, alpha = 0.6) +
+  geom_smooth(method = 'lm', fill = my_palette[10], color = my_palette[10]) +
+  labs(x = '', 
+       y = "% of votes for Joe Biden, 2020")+ 
+  scale_y_continuous(labels = scales::label_percent()) +
+  scale_color_manual(values = my_palette[c(8,4)]) +
+  facet_wrap(~ trend, scales = 'free_x')
+  # facet_grid(rows = vars(pres), cols = vars(trend), scales = 'free_x')
+
+library(patchwork)
+pres_2016_plot /pres_2020_plot
+
+```
 
 ```{r pres_2016_analysis}
+
+#|  results='asis'
+
 pres_2016 <- pres_2016 %>% 
   select(-c(Geo_QName, dma)) %>% 
   mutate(across(c(hillary_clinton_trend,donald_trump_trend:broadband)  , ~ scale(.x, center=TRUE, scale=TRUE)[,1]))
@@ -790,19 +617,20 @@ vacc_hes_3b  <- lm(trump_p    ~
 modelsummary(list(vacc_hes_2a,vacc_hes_1a, vacc_hes_3a 
                   # ,vacc_hes_1b, vacc_hes_2b,vacc_hes_3b
                   ), 
-             # title = "Linear Regression Results for 2016 Presidential Election Results (Hilary Clinton Shown)",
+             title = "Linear Regression Results for 2016 Presidential Election Results (Hilary Clinton Shown)",
              notes= c('* p < .05. ** p < .01. *** p < .001 (two-tailed test).',
                       'Results predicting Donald J. Trump percentage largely equivalent and available upon request.'),
              estimate = "{estimate}{stars}",
              gof_omit = 'AIC|BIC|ICC|RMSE|F'
-             ) %>%
-  kable_styling(latex_options = c("hold_position", 'condensed'),
-                font_size = 10)
+             ) 
 
 
 ```
 
 ```{r pres_2020_analysis}
+#|  results='asis'
+
+
 pres_2020 <- pres_2020 %>% 
   select(-c(Geo_QName, dma)) %>% 
   mutate(across(c(joe_biden_trend,donald_trump_trend:broadband)  , ~ scale(.x, center=TRUE, scale=TRUE)[,1]))
@@ -841,45 +669,12 @@ vacc_hes_3b  <- lm(trump_p    ~
 modelsummary(list(vacc_hes_2a, vacc_hes_1a, vacc_hes_3a 
                   # ,vacc_hes_1b, vacc_hes_2b,vacc_hes_3b
                   ), 
-             # title = "Linear Regression Results for 2020 Presidential Election Results (Joe Biden Shown)",
+             title = "Linear Regression Results for 2020 Presidential Election Results (Joe Biden Shown)",
              notes= c('* p < .05. ** p < .01. *** p < .001 (two-tailed test).',
                       'Results predicting Donald J. Trump percentage largely equivalent and available upon request.'),
              estimate = "{estimate}{stars}",
              gof_omit = 'AIC|BIC|ICC|RMSE|F'
-             ) %>%
-  kable_styling(latex_options = c("hold_position", 'condensed'),
-                font_size = 10)
+             ) 
 
 
 ```
-
-
-# Discussion
-
-The external validity of these voting 
-
-
-While I expect these tests to show high correlation between observed
-indicators and Google search trends, there will be three important
-questions that surface. First, just because something is correlated,
-does that mean it can replace the collection of other types of data?
-Second, how correlated does a trend need to be for social scientists to
-justifiably rely on it to indicate some outcome? And finally, how can we
-construct analyses like this to be robust to changes in the terms used
-across time and location?
-
-The purpose of this paper is more methodological than theoretical, and I
-see this paper having an impact on the social sciences and computational
-social science as researchers pursue more projects using this source of
-big data. Google Trends are relatively underutilized in the field
-compared to in the health sciences and business. Once I assess how this
-data can be used, I would like to be able to join
-@bailCulturalEnvironmentMeasuring2014 in encouraging social scientists
-to pursue more research with big data while taking into account the
-potential pitfalls with any source of big data
-[@mcfarlandBigDataDanger2015].
-
-# Conclusion
-
-\newpage
-

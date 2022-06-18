@@ -1,0 +1,645 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Article 1: Digital Trace Data as Indicators of Social Data Validating Google Trends for use in Scientific Research},
+  pdfauthor={Kelsey Gonzalez},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{siunitx}
+\usepackage{setspace}
+\usepackage{dcolumn}
+\usepackage{longtable}
+\usepackage{caption}
+\usepackage{booktabs}
+\usepackage{placeins}
+\usepackage{hhline}
+\doublespacing
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\title{Article 1: Digital Trace Data as Indicators of Social Data
+Validating Google Trends for use in Scientific Research}
+\author{Kelsey Gonzalez}
+\date{21 March, 2022}
+
+\begin{document}
+\maketitle
+
+\hypertarget{research-methodology}{%
+\section{Research Methodology}\label{research-methodology}}
+
+\providecommand{\docline}[3]{\noalign{\global\setlength{\arrayrulewidth}{#1}}\arrayrulecolor[HTML]{#2}\cline{#3}}
+
+\setlength{\tabcolsep}{2pt}
+
+\renewcommand*{\arraystretch}{1.5}
+
+\begin{longtable}[c]{cccc}
+
+\caption{New York Air Quality Measurements
+}(\#tab:data-sources-table)\\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{004F63}}l}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{FFFFFF}{\global\setmainfont{Arial}{\textbf{Validated.Data.Source}}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{004F63}}l}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{FFFFFF}{\global\setmainfont{Arial}{\textbf{Type}}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{004F63}}l}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{FFFFFF}{\global\setmainfont{Arial}{\textbf{Dates}}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{004F63}}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{FFFFFF}{\global\setmainfont{Arial}{\textbf{Google.Trends.Used}}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+\endfirsthead
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{004F63}}l}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{FFFFFF}{\global\setmainfont{Arial}{\textbf{Validated.Data.Source}}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{004F63}}l}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{FFFFFF}{\global\setmainfont{Arial}{\textbf{Type}}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{004F63}}l}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{FFFFFF}{\global\setmainfont{Arial}{\textbf{Dates}}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{004F63}}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{FFFFFF}{\global\setmainfont{Arial}{\textbf{Google.Trends.Used}}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}\endhead
+
+
+
+\multicolumn{4}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{BAD7DB}}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{\textbf{\textit{Behaviors\ and\ Attitudes}}}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{General\ Social\ Survey}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Cross-Sectional}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{2010\ -\ 2020}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Vaccine\ Hesitancy\ for\ COVID-19}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Cross-Sectional}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{March\ 3\ –\ 15,\ 2021}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Search\ Topics:\ 'Covid-19\ vaccine',\ 'Coronavirus\ (Disease)',\ 'Coronavirus\ (Virus)',\ 'Vaccine'}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Mask-Wearing\ Survey\ Data}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Cross-Sectional}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{July\ 2\ -\ 14,\ 2020}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Search\ Topics:\ 'Coronavirus\ (Disease)',\ 'Coronavirus\ (Virus)',\ 'Cloth\ Face\ Mask',\ 'Mask',\ 'Civil\ and\ Political\ Rights'}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{4}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{BAD7DB}}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{\textbf{\textit{Health}}}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Covid\ Rates}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Longitudinal}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Every\ Monday,\ 2020\ -\ 2021}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{'Covid-19',\ 'Coronavirus',\ 'Taste\ Loss',\ 'Smell\ Loss'}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{County\ Suicide\ Rates}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Longitudinal}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Yearly\ 2010-2020}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Search\ Topics:\ 'Suicide',\ 'Depression',\ Search\ Term:'\ Suicide\ Hotline'}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{4}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{BAD7DB}}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{\textbf{\textit{Political}}}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{American\ National\ Election\ Survey}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Cross-Sectional}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{2020}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Presidential\ Election\ Results}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Cross\ Sectional}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{2016\ \&\ 2020}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Search\ Topics:\ 'Hilary\ Clinton',\ 'Donald\ Trump',\ 'Joe\ Biden'}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\end{longtable}
+
+\hypertarget{measures}{%
+\subsection{Measures}\label{measures}}
+
+\hypertarget{vacc_hes}{%
+\paragraph{vacc\_hes}\label{vacc_hes}}
+
+3148
+
+from 4.99\% to 32.33\%.
+
+\hypertarget{mask}{%
+\paragraph{mask}\label{mask}}
+
+(range = 0.10\% to\\
+55.80\%)
+
+\hypertarget{health}{%
+\subsubsection{health}\label{health}}
+
+\hypertarget{covid}{%
+\paragraph{covid}\label{covid}}
+
+0 to a maximum of 1460.46 for each Monday from January 27, 2020 through
+December 27, 2021. There are 285986 cases across 3136 counties and 101
+dates.
+
+\hypertarget{suicide}{%
+\paragraph{suicide}\label{suicide}}
+
+There are 34683 total cases, resulting from 34617 observations of 3147
+counties. Missing data were interpolated using.
+
+Measures range from 0.034 to 53.254.
+
+\hypertarget{political}{%
+\subsubsection{political}\label{political}}
+
+avaiable for 3147 counties in 2016\\
+and 3118 counties in 2020.
+
+with the lowest percent at 3.09\% and the highest at 92.15\%.
+
+\providecommand{\docline}[3]{\noalign{\global\setlength{\arrayrulewidth}{#1}}\arrayrulecolor[HTML]{#2}\cline{#3}}
+
+\setlength{\tabcolsep}{2pt}
+
+\renewcommand*{\arraystretch}{1.5}
+
+\begin{longtable}[c]{ccccccc}
+
+\caption{Correlation Results
+}(\#tab:corr-results)\\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{004F63}}l}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{FFFFFF}{\global\setmainfont{Arial}{\textbf{measure}}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{004F63}}l}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{FFFFFF}{\global\setmainfont{Arial}{\textbf{variable}}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{004F63}}l}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{FFFFFF}{\global\setmainfont{Arial}{\textbf{trend1}}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{004F63}}l}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{FFFFFF}{\global\setmainfont{Arial}{\textbf{trend2}}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{004F63}}l}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{FFFFFF}{\global\setmainfont{Arial}{\textbf{trend3}}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{004F63}}l}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{FFFFFF}{\global\setmainfont{Arial}{\textbf{trend4}}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{004F63}}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{FFFFFF}{\global\setmainfont{Arial}{\textbf{trend5}}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+\endfirsthead
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{004F63}}l}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{FFFFFF}{\global\setmainfont{Arial}{\textbf{measure}}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{004F63}}l}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{FFFFFF}{\global\setmainfont{Arial}{\textbf{variable}}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{004F63}}l}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{FFFFFF}{\global\setmainfont{Arial}{\textbf{trend1}}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{004F63}}l}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{FFFFFF}{\global\setmainfont{Arial}{\textbf{trend2}}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{004F63}}l}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{FFFFFF}{\global\setmainfont{Arial}{\textbf{trend3}}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{004F63}}l}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{FFFFFF}{\global\setmainfont{Arial}{\textbf{trend4}}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{004F63}}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{11}{11}\selectfont{\textcolor[HTML]{FFFFFF}{\global\setmainfont{Arial}{\textbf{trend5}}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}\endhead
+
+
+
+\multicolumn{7}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{BAD7DB}}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{\textbf{\textit{Vaccine\ Hesitancy}}}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Covid-19\ vaccine}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Coronavirus\ (Disease)}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Coronavirus\ (Virus)}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Vaccine}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Pearson's\ R\ Correlation}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Vaccine\ Hesitancy}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{-0.3866}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{-0.4657}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{-0.3561}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{-0.3994}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{7}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{BAD7DB}}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{\textbf{\textit{Mask\ Attitudes}}}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Coronavirus\ (Disease)}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Coronavirus\ (Virus)}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Cloth\ Face\ Mask}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Mask}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Civil\ and\ Political\ Rights}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Pearson's\ R\ Correlation}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Mask\ Rare}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{-0.1398}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{-0.1343}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{0.146}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{0.1339}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{-0.1175}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{7}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{BAD7DB}}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{\textbf{\textit{Covid\ Rates}}}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{covid\_19}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{smell\_loss}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{taste\_loss}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Pearson's\ R\ Correlation}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Covid\ Rate}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{-0.1012}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{0.2835}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{0.2851}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{repeated\ measures\ correlation\ coefficient}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Covid\ Rate}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{-0.099***}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{0.322***}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{0.313***}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{7}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{BAD7DB}}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{\textbf{\textit{Suicide\ Rates}}}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{suicide}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{depression}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{suicide\_hotline}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Pearson's\ R\ Correlation}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Suicide\ Rate}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{0.0845}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{0.0273}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{0.0618}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{repeated\ measures\ correlation\ coefficient}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Suicide\ Rate}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{0.055***}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{0.142***}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{0.131***}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{7}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{BAD7DB}}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{\textbf{\textit{2016\ Presidential\ Votes}}}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Hilary\ Clinton}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Donald\ Trump}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Pearson's\ R\ Correlation}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{2016\ Votes\ for\ Clinton}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{-0.1663}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{0.1663}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Pearson's\ R\ Correlation}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{2016\ Votes\ for\ Trump}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{0.1682}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{-0.1682}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{7}{!{\color[HTML]{666666}\vrule width 1pt}>{\cellcolor[HTML]{BAD7DB}}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{\textbf{\textit{2020\ Presidential\ Votes}}}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Joe\ Biden}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Donald\ Trump}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Pearson's\ R\ Correlation}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{2020\ Votes\ for\ Biden}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{-0.0286}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{0.0286}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{Pearson's\ R\ Correlation}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{2020\ Votes\ for\ Trump}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{0.0356}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{-0.0356}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} & \multicolumn{1}{!{\color[HTML]{666666}\vrule width 1pt}>{}l!{\color[HTML]{666666}\vrule width 1pt}}{\fontsize{8}{8}\selectfont{\textcolor[HTML]{000000}{\global\setmainfont{Arial}{}}}} \\
+
+\hhline{>{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}->{\arrayrulecolor[HTML]{666666}\global\arrayrulewidth=1pt}-}
+
+
+
+\end{longtable}
+
+\begin{center}\includegraphics[width=0.8\linewidth]{paper1_files/figure-latex/vacc_hes_plot-1} \end{center}
+
+\begin{table}
+
+\caption{\label{tab:vacc_hes_analysis}Linear Regression Results for Vaccine Hesitancy}
+\centering
+\begin{tabular}[t]{lccc}
+\toprule
+  & Model 1 & Model 2 & Model 3\\
+\midrule
+(Intercept) & \num{0.191}*** & \num{0.191}*** & \num{0.191}***\\
+ & (\num{0.001}) & (\num{0.001}) & (\num{0.001})\\
+covid\_19\_vaccine & \num{-0.006}+ &  & \num{-0.011}**\\
+ & (\num{0.004}) &  & (\num{0.003})\\
+vaccine & \num{0.021}*** &  & \num{0.023}***\\
+ & (\num{0.005}) &  & (\num{0.005})\\
+coronavirus\_disease & \num{-0.037}*** &  & \num{-0.027}***\\
+ & (\num{0.003}) &  & (\num{0.003})\\
+coronavirus\_virus & \num{-0.003}* &  & \num{0.000}\\
+ & (\num{0.001}) &  & (\num{0.001})\\
+total\_pop &  & \num{-0.005}*** & \num{-0.004}***\\
+ &  & (\num{0.001}) & \vphantom{5} (\num{0.001})\\
+pop\_density &  & \num{-0.004}*** & \num{-0.003}***\\
+ &  & (\num{0.001}) & \vphantom{4} (\num{0.001})\\
+unemployment\_rate &  & \num{-0.002}* & \num{0.000}\\
+ &  & (\num{0.001}) & \vphantom{3} (\num{0.001})\\
+over\_65 &  & \num{-0.013}*** & \num{-0.010}***\\
+ &  & (\num{0.001}) & \vphantom{2} (\num{0.001})\\
+poverty\_rate &  & \num{0.005}** & \num{0.004}**\\
+ &  & (\num{0.002}) & (\num{0.001})\\
+median\_income &  & \num{-0.021}*** & \num{-0.016}***\\
+ &  & (\num{0.001}) & \vphantom{1} (\num{0.001})\\
+broadband &  & \num{-0.008}*** & \num{-0.005}***\\
+ &  & (\num{0.001}) & (\num{0.001})\\
+\midrule
+Num.Obs. & \num{3148} & \num{3133} & \num{3133}\\
+R2 & \num{0.233} & \num{0.350} & \num{0.411}\\
+R2 Adj. & \num{0.232} & \num{0.349} & \num{0.409}\\
+Log.Lik. & \num{5163.343} & \num{5405.127} & \num{5557.567}\\
+F & \num{238.587} & \num{240.876} & \num{197.733}\\
+\bottomrule
+\multicolumn{4}{l}{\rule{0pt}{1em}* p $<$ .05. ** p $<$ .01. *** p $<$ .001 (two-tailed test).}\\
+\end{tabular}
+\end{table}
+
+\begin{center}\includegraphics[width=0.8\linewidth]{paper1_files/figure-latex/mask_plot-1} \end{center}
+
+\begin{table}
+
+\caption{\label{tab:mask_analysis}Linear Regression Results for Rare Mask Usage}
+\centering
+\begin{tabular}[t]{lccc}
+\toprule
+  & Model 1 & Model 2 & Model 3\\
+\midrule
+(Intercept) & \num{0.162}*** & \num{0.163}*** & \num{0.162}***\\
+ & (\num{0.002}) & (\num{0.002}) & (\num{0.002})\\
+coronavirus\_disease & \num{-0.011}*** &  & \num{-0.012}***\\
+ & (\num{0.003}) &  & \vphantom{3} (\num{0.003})\\
+coronavirus\_virus & \num{-0.007}* &  & \num{0.003}\\
+ & (\num{0.003}) &  & \vphantom{2} (\num{0.003})\\
+cloth\_face\_mask & \num{-0.003} &  & \num{-0.008}*\\
+ & (\num{0.003}) &  & \vphantom{1} (\num{0.003})\\
+mask & \num{0.019}*** &  & \num{0.016}***\\
+ & (\num{0.003}) &  & (\num{0.003})\\
+total\_pop &  & \num{-0.012}*** & \num{-0.011}***\\
+ &  & (\num{0.002}) & \vphantom{3} (\num{0.002})\\
+pop\_density &  & \num{-0.003}+ & \num{-0.003}*\\
+ &  & (\num{0.002}) & \vphantom{2} (\num{0.002})\\
+unemployment\_rate &  & \num{-0.028}*** & \num{-0.027}***\\
+ &  & (\num{0.002}) & \vphantom{1} (\num{0.002})\\
+over\_65 &  & \num{-0.006}** & \num{-0.005}*\\
+ &  & (\num{0.002}) & (\num{0.002})\\
+poverty\_rate &  & \num{-0.010}** & \num{-0.010}**\\
+ &  & (\num{0.003}) & \vphantom{2} (\num{0.003})\\
+median\_income &  & \num{-0.036}*** & \num{-0.033}***\\
+ &  & (\num{0.003}) & \vphantom{1} (\num{0.003})\\
+broadband &  & \num{-0.006}* & \num{-0.006}*\\
+ &  & (\num{0.003}) & (\num{0.003})\\
+\midrule
+Num.Obs. & \num{3136} & \num{3133} & \num{3121}\\
+R2 & \num{0.049} & \num{0.176} & \num{0.189}\\
+R2 Adj. & \num{0.047} & \num{0.174} & \num{0.186}\\
+Log.Lik. & \num{2970.506} & \num{3184.261} & \num{3202.189}\\
+F & \num{40.072} & \num{95.547} & \num{65.970}\\
+\bottomrule
+\multicolumn{4}{l}{\rule{0pt}{1em}* p $<$ .05. ** p $<$ .01. *** p $<$ .001 (two-tailed test).}\\
+\end{tabular}
+\end{table}
+
+\begin{center}\includegraphics[width=0.8\linewidth]{paper1_files/figure-latex/covid_plot-1} \end{center}
+
+Random effect variances not available. Returned R2 does not account for
+random effects. Random effect variances not available. Returned R2 does
+not account for random effects.
+
+\begin{table}
+
+\caption{\label{tab:covid_analysis}Hierarchical Model for Covid Case Rates}
+\centering
+\begin{tabular}[t]{lccc}
+\toprule
+  & Model 1 & Model 2 & Model 3\\
+\midrule
+(Intercept) & \num{-532.306}*** & \num{-712.023}*** & \num{-534.608}***\\
+ & (\num{8.271}) & (\num{6.009}) & (\num{8.268})\\
+covid\_19 & \num{1.031}*** &  & \num{1.024}***\\
+ & (\num{0.082}) &  & \vphantom{1} (\num{0.082})\\
+smell\_loss & \num{7.373}*** &  & \num{7.374}***\\
+ & (\num{0.082}) &  & (\num{0.082})\\
+taste\_loss & \num{6.344}*** &  & \num{6.347}***\\
+ & (\num{0.078}) &  & (\num{0.078})\\
+covid\_rate\_fips\_mean & \num{0.813}*** & \num{0.982}*** & \num{0.879}***\\
+ & (\num{0.019}) & (\num{0.010}) & (\num{0.020})\\
+date & \num{0.029}*** & \num{0.038}*** & \num{0.029}***\\
+ & (\num{0.000}) & (\num{0.000}) & (\num{0.000})\\
+SD (Intercept) & \num{5.196} & \num{0.002} & \num{4.984}\\
+SD (Observations) & \num{29.478} & \num{31.736} & \num{29.441}\\
+total\_pop &  & \num{0.064} & \num{0.409}**\\
+ &  & (\num{0.066}) & (\num{0.140})\\
+pop\_density &  & \num{0.010} & \num{0.463}***\\
+ &  & (\num{0.067}) & (\num{0.123})\\
+unemployment\_rate &  & \num{0.049} & \num{0.725}***\\
+ &  & (\num{0.080}) & (\num{0.155})\\
+over\_65 &  & \num{-0.116} & \num{-0.055}\\
+ &  & (\num{0.074}) & (\num{0.139})\\
+poverty\_rate &  & \num{0.054} & \num{0.351}\\
+ &  & (\num{0.118}) & (\num{0.221})\\
+median\_income &  & \num{0.031} & \num{0.907}***\\
+ &  & (\num{0.114}) & (\num{0.214})\\
+broadband &  & \num{0.073} & \num{0.437}*\\
+ &  & (\num{0.097}) & (\num{0.182})\\
+\midrule
+Num.Obs. & \num{248346} & \num{284666} & \num{247655}\\
+R2 Marg. & \num{0.201} & \num{0.081} & \num{0.200}\\
+R2 Cond. &  & \num{0.081} & \\
+\bottomrule
+\multicolumn{4}{l}{\rule{0pt}{1em}Random intercept per county}\\
+\multicolumn{4}{l}{\rule{0pt}{1em}* p $<$ .05. ** p $<$ .01. *** p $<$ .001 (two-tailed test).}\\
+\end{tabular}
+\end{table}
+
+\begin{center}\includegraphics[width=0.8\linewidth]{paper1_files/figure-latex/suicide_plot-1} \end{center}
+
+Random effect variances not available. Returned R2 does not account for
+random effects. Random effect variances not available. Returned R2 does
+not account for random effects. Random effect variances not available.
+Returned R2 does not account for random effects.
+
+\begin{table}
+
+\caption{\label{tab:suicide_analysis}Hierarchical Model for Suicide Rates}
+\centering
+\begin{tabular}[t]{lccc}
+\toprule
+  & Model 1 & Model 2 & Model 3\\
+\midrule
+(Intercept) & \num{-7.364}*** & \num{-10.046}*** & \num{-9.683}***\\
+ & (\num{0.359}) & (\num{0.342}) & (\num{0.454})\\
+suicide & \num{-0.001} &  & \num{-0.001}\\
+ & (\num{0.001}) &  & \vphantom{2} (\num{0.001})\\
+depression & \num{-0.001}+ &  & \num{-0.001}\\
+ & (\num{0.001}) &  & \vphantom{1} (\num{0.001})\\
+suicide\_hotline & \num{0.002}*** &  & \num{0.002}***\\
+ & (\num{0.001}) &  & (\num{0.001})\\
+year & \num{0.004}*** & \num{0.005}*** & \num{0.005}***\\
+ & (\num{0.000}) & (\num{0.000}) & (\num{0.000})\\
+SD (Intercept) & \num{1.460} & \num{1.587} & \num{1.459}\\
+SD (Observations) & \num{0.050} & \num{0.051} & \num{0.050}\\
+total\_pop &  & \num{-0.032}*** & \num{-0.027}**\\
+ &  & (\num{0.010}) & (\num{0.009})\\
+pop\_density &  & \num{-0.037}** & \num{-0.033}**\\
+ &  & (\num{0.011}) & (\num{0.011})\\
+unemployment\_rate &  & \num{-0.001} & \num{-0.001}\\
+ &  & (\num{0.001}) & \vphantom{1} (\num{0.001})\\
+over\_65 &  & \num{-0.010}*** & \num{-0.014}***\\
+ &  & (\num{0.002}) & \vphantom{1} (\num{0.002})\\
+poverty\_rate &  & \num{-0.005}*** & \num{-0.003}**\\
+ &  & (\num{0.001}) & (\num{0.001})\\
+median\_income &  & \num{-0.014}*** & \num{-0.015}***\\
+ &  & (\num{0.002}) & (\num{0.002})\\
+\midrule
+Num.Obs. & \num{30008} & \num{33582} & \num{30001}\\
+R2 Marg. & \num{0.058} & \num{0.582} & \num{0.564}\\
+R2 Cond. &  &  & \\
+\bottomrule
+\multicolumn{4}{l}{\rule{0pt}{1em}Random intercept per county}\\
+\multicolumn{4}{l}{\rule{0pt}{1em}* p $<$ .05. ** p $<$ .01. *** p $<$ .001 (two-tailed test).}\\
+\end{tabular}
+\end{table}
+
+\begin{center}\includegraphics[width=0.8\linewidth]{paper1_files/figure-latex/pres_plot-1} \end{center}
+
+\begin{table}
+
+\caption{\label{tab:pres_2016_analysis}Linear Regression Results for 2016 Presidential Election Results (Hilary Clinton Shown)}
+\centering
+\begin{tabular}[t]{lccc}
+\toprule
+  & Model 1 & Model 2 & Model 3\\
+\midrule
+(Intercept) & \num{0.318}*** & \num{0.318}*** & \num{0.318}***\\
+ & (\num{0.003}) & (\num{0.002}) & (\num{0.002})\\
+hillary\_clinton\_trend & \num{-0.025}*** &  & \num{-0.019}***\\
+ & (\num{0.003}) &  & (\num{0.002})\\
+total\_pop &  & \num{0.028}*** & \num{0.028}***\\
+ &  & (\num{0.002}) & \vphantom{1} (\num{0.002})\\
+pop\_density &  & \num{0.022}*** & \num{0.022}***\\
+ &  & (\num{0.002}) & (\num{0.002})\\
+unemployment\_rate &  & \num{0.047}*** & \num{0.045}***\\
+ &  & (\num{0.003}) & \vphantom{1} (\num{0.003})\\
+over\_65 &  & \num{-0.012}*** & \num{-0.014}***\\
+ &  & (\num{0.003}) & (\num{0.003})\\
+poverty\_rate &  & \num{0.034}*** & \num{0.034}***\\
+ &  & (\num{0.004}) & \vphantom{1} (\num{0.004})\\
+median\_income &  & \num{0.054}*** & \num{0.052}***\\
+ &  & (\num{0.004}) & (\num{0.004})\\
+\midrule
+Num.Obs. & \num{3147} & \num{3145} & \num{3145}\\
+R2 & \num{0.028} & \num{0.314} & \num{0.329}\\
+R2 Adj. & \num{0.027} & \num{0.313} & \num{0.327}\\
+Log.Lik. & \num{1483.493} & \num{2037.065} & \num{2071.025}\\
+\bottomrule
+\multicolumn{4}{l}{\rule{0pt}{1em}Results predicting Donald J. Trump percentage largely equivalent and available upon request.}\\
+\multicolumn{4}{l}{\rule{0pt}{1em}* p $<$ .05. ** p $<$ .01. *** p $<$ .001 (two-tailed test).}\\
+\end{tabular}
+\end{table}
+
+\begin{table}
+
+\caption{\label{tab:pres_2020_analysis}Linear Regression Results for 2020 Presidential Election Results (Joe Biden Shown)}
+\centering
+\begin{tabular}[t]{lccc}
+\toprule
+  & Model 1 & Model 2 & Model 3\\
+\midrule
+(Intercept) & \num{0.333}*** & \num{0.333}*** & \num{0.333}***\\
+ & (\num{0.003}) & (\num{0.002}) & (\num{0.002})\\
+joe\_biden\_trend & \num{-0.005} &  & \num{-0.014}***\\
+ & (\num{0.003}) &  & (\num{0.002})\\
+total\_pop &  & \num{0.030}*** & \num{0.029}***\\
+ &  & (\num{0.003}) & \vphantom{3} (\num{0.003})\\
+pop\_density &  & \num{0.021}*** & \num{0.022}***\\
+ &  & (\num{0.003}) & \vphantom{2} (\num{0.003})\\
+unemployment\_rate &  & \num{0.044}*** & \num{0.044}***\\
+ &  & (\num{0.003}) & \vphantom{1} (\num{0.003})\\
+over\_65 &  & \num{-0.007}* & \num{-0.008}**\\
+ &  & (\num{0.003}) & (\num{0.003})\\
+poverty\_rate &  & \num{0.032}*** & \num{0.033}***\\
+ &  & (\num{0.004}) & \vphantom{1} (\num{0.004})\\
+median\_income &  & \num{0.069}*** & \num{0.070}***\\
+ &  & (\num{0.004}) & (\num{0.004})\\
+\midrule
+Num.Obs. & \num{3118} & \num{3118} & \num{3118}\\
+R2 & \num{0.001} & \num{0.295} & \num{0.303}\\
+R2 Adj. & \num{0.000} & \num{0.294} & \num{0.301}\\
+Log.Lik. & \num{1291.161} & \num{1835.433} & \num{1852.002}\\
+\bottomrule
+\multicolumn{4}{l}{\rule{0pt}{1em}Results predicting Donald J. Trump percentage largely equivalent and available upon request.}\\
+\multicolumn{4}{l}{\rule{0pt}{1em}* p $<$ .05. ** p $<$ .01. *** p $<$ .001 (two-tailed test).}\\
+\end{tabular}
+\end{table}
+
+\end{document}
